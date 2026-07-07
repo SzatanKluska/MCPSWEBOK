@@ -1,0 +1,10 @@
+# SWEBOK RAG preparation pipeline — dependencies
+# All permissive licenses (MIT / BSD / Apache-2.0). No copyleft.
+
+pdfplumber==0.11.4        # MIT — PDF text/layout extraction
+pypdf==5.1.0              # BSD — PDF fallback / metadata
+PyYAML==6.0.2             # MIT — config + taxonomy files
+sentence-transformers==3.3.1  # Apache-2.0 — local embeddings (brings numpy, BSD)
+# Optional vector store. Default is the pure-numpy store (no build tools needed).
+# chromadb requires Microsoft C++ Build Tools to compile hnswlib on Windows.
+# chromadb==0.5.23        # Apache-2.0 — optional local vector store

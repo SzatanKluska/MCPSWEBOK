@@ -1,0 +1,41 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 1: Software Requirements
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics.
+
+ka_id: SWEBOK-KA-01
+ka_name: Software Requirements
+source_version: SWEBOK Guide V4.0
+topics:
+  - id: "1"
+    name: Software Requirements Fundamentals
+    aliases:
+      - Requirements Fundamentals
+  - id: "2"
+    name: Requirements Elicitation
+    aliases:
+      - Elicitation
+  - id: "3"
+    name: Requirements Analysis
+    aliases:
+      - Analysis
+  - id: "4"
+    name: Requirements Specification
+    aliases:
+      - Specification
+  - id: "5"
+    name: Requirements Validation
+    aliases:
+      - Validation
+  - id: "6"
+    name: Requirements Management Activities
+    aliases:
+      - Requirements Management
+      - Management Activities
+  - id: "7"
+    name: Practical Considerations
+    aliases:
+      - Practical Activities
+  - id: "8"
+    name: Software Requirements Tools
+    aliases:
+      - Requirements Tools

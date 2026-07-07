@@ -1,0 +1,47 @@
+# SWEBOK RAG preparation pipeline — configuration.
+# Technology choices live here, NOT in the core logic. Swapping an
+# implementation = changing a value below (ports & adapters pattern).
+
+paths:
+  raw_materials: ../RawMaterials
+  taxonomy: ./taxonomy/swebok_v4.yaml
+  output: ./output                    # internal artifacts (QA report)
+  knowledge_base: ../../KnowledgeBase # handoff contract consumed by the MCP server
+
+# --- Pluggable implementations (reference implementations for the POC) ---
+extractor:
+  provider: pdfplumber        # options: pdfplumber
+  min_font_size: 8.5          # drop figure/diagram garbage below this size
+  two_column: true            # split each page into left/right columns
+
+cleaner:
+  provider: basic
+  drop_patterns:              # regex lines to remove (headers/footers)
+    - '^SWEBOK.*GUIDE.*V4'
+    - '^\d+-\d+$'             # page numbers like 1-1
+    - '^SOFTWARE REQUIREMENTS$'
+
+chunker:
+  provider: structure
+  max_tokens: 350             # approx target chunk size (word-based proxy)
+  overlap_tokens: 50
+  min_chunk_tokens: 20
+
+embedder:
+  provider: sentence_transformers
+  model: BAAI/bge-small-en-v1.5
+  query_prefix: "Represent this sentence for searching relevant passages: "
+
+vector_store:
+  provider: numpy             # options: numpy | chroma (chroma needs C++ build tools)
+  collection: swebok
+  persist_dir: ../../KnowledgeBase/vectors
+
+evaluation:
+  top_k: 5
+  recall_threshold: 0.6
+
+quality:
+  min_extraction_ratio: 0.7   # min share of pages yielding usable text
+  min_chunk_tokens: 20
+  max_chunk_tokens: 500
