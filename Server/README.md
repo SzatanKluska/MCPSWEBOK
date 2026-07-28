@@ -1,42 +1,87 @@
-# swebok-mcp (server skeleton)
+# swebok-mcp
 
-A minimal, runnable **MCP server skeleton** (Node.js + TypeScript, MCP SDK v2)
-for the SWEBOK knowledge base. It boots, selects a transport from configuration
-(stdio by default), connects, and waits. Tools, resources, and prompts are **not
-implemented yet** — the registration points are in place, ready to fill in.
+A runnable **MCP server** (Node.js + TypeScript, MCP SDK v2) for the SWEBOK
+knowledge base. It boots, builds a RAG index from the knowledge base, selects a
+transport from configuration (stdio by default), connects, and serves the
+`swebok_search` tool. Dependencies are wired with an **InversifyJS** IoC
+container (class-based, constructor injection).
+
+The server is self-contained: query embedding runs in-process via transformers.js
+(ONNX) — no Python at runtime.
 
 ## Layout
 
 ```
 Server/
-  package.json           # scripts + deps (@modelcontextprotocol/server)
-  tsconfig.json          # NodeNext, ES2022, strict -> dist/
+  package.json           # scripts + deps (mcp sdk, inversify, transformers.js, zod)
+  tsconfig.json          # NodeNext, ES2022, strict, decorators -> dist/
+  documentation/
+    tools/
+      swebok_search.md   # per-tool docs (how it works, use case, architecture)
   src/
-    index.ts             # entry: config -> server -> transport -> connect
-    config.ts            # env-driven config (transport, name, version)
-    server.ts            # builds McpServer, wires the registrars
+    index.ts             # composition root: container -> factory -> connect
+    config.ts            # env-driven config (transport, KB path, model, topK...)
+    server.ts            # ServerFactory: builds McpServer, wires tools
+    di/
+      container.ts       # Inversify bindings (the only place touching the container)
+      types.ts           # DI tokens (Config, ServerTool)
+    rag/
+      retriever.ts       # RAG orchestration (embed + cosine search); async warm-up
+      embedder.ts        # transformers.js (ONNX) query/document embedding
+      vectorStore.ts     # in-memory cosine-similarity search
+      knowledgeBase.ts   # loads KnowledgeBase/chunks.jsonl
+      types.ts           # Chunk / Hit types
+    tools/
+      serverTool.ts      # ServerTool interface (register(server))
+      swebokSearchTool.ts# swebok_search tool (injectable class)
     transport/
       index.ts           # createTransport(config): the single swap point
       stdio.ts           # stdio transport (implemented)
       http.ts            # Streamable HTTP transport (stub / extension point)
-    tools/index.ts       # registerTools()      — empty (TODO)
     resources/index.ts   # registerResources()  — empty (TODO)
     prompts/index.ts     # registerPrompts()    — empty (TODO)
+    completions/index.ts # registerCompletions()— empty (TODO)
+    sampling/index.ts    # requestSampling()    — helper (TODO)
 ```
+
+## Dependency injection
+
+Wiring uses an **InversifyJS** container built in the composition root
+([`src/di/container.ts`](src/di/container.ts) + [`src/index.ts`](src/index.ts)).
+Every component receives its dependencies through the constructor (`@inject` /
+`@multiInject`) and never reaches into the container — this is Dependency
+Injection, not service location.
+
+- [`ServerFactory`](src/server.ts) (`@injectable`) receives the config and all
+  `ServerTool`s (`@multiInject(TYPES.ServerTool)`) and builds the `McpServer`.
+- Tools are registered under a shared token, so **adding a tool is a one-line
+  `bind()`** in `container.ts` — `ServerFactory` does not change.
+- [`Retriever`](src/rag/retriever.ts) performs an async warm-up in a
+  `@postConstruct` hook (load `chunks.jsonl` + embed all chunks), awaited via
+  `container.getAsync(...)` at startup so the first tool call is instant.
+
+## Tools
+
+| Tool | Description | Docs |
+|------|-------------|------|
+| `swebok_search` | Retrieval-only RAG search over SWEBOK; returns top-k passages with citations. | [documentation/tools/swebok_search.md](documentation/tools/swebok_search.md) |
 
 ## Transport abstraction
 
 Every concrete transport implements the same interface that
 `McpServer.connect()` accepts, so `createTransport(config)` in
 [`src/transport/index.ts`](src/transport/index.ts) is the only place that knows
-which one is active — mirroring the ports & adapters factory used in the RAG
-pipeline. `stdio` is implemented; `http` is a typed stub documenting how to add
-Streamable HTTP later.
+which one is active. `stdio` is implemented; `http` is a typed stub documenting
+how to add Streamable HTTP later.
 
 ## Prerequisites
 
 - Node.js **>= 20** (`node --version`). If missing on Windows:
   `winget install OpenJS.NodeJS.LTS`.
+- A built knowledge base at `../KnowledgeBase/chunks.jsonl` — produced by the RAG
+  pipeline (`RAG/pipeline`, command `ragprep.cli index`).
+- Internet access on **first** run: transformers.js downloads the
+  `Xenova/bge-small-en-v1.5` model (~130 MB) into a `node_modules` cache.
 
 ## Install & build
 
@@ -59,17 +104,24 @@ Development watch mode (auto-restart on change, no manual build):
 npm run dev
 ```
 
+On startup the server logs (to stderr) the knowledge-base path and the number of
+indexed chunks, then waits for JSON-RPC.
+
 ## Configuration
 
 All via environment variables:
 
-| Variable             | Default       | Description                          |
-|----------------------|---------------|--------------------------------------|
-| `MCP_TRANSPORT`      | `stdio`       | `stdio` or `http`                    |
-| `MCP_SERVER_NAME`    | `swebok-mcp`  | Server name advertised to clients    |
-| `MCP_SERVER_VERSION` | `0.1.0`       | Server version advertised            |
-| `MCP_HTTP_HOST`      | `127.0.0.1`   | HTTP bind host (when HTTP is added)  |
-| `MCP_HTTP_PORT`      | `3000`        | HTTP bind port (when HTTP is added)  |
+| Variable              | Default                          | Description                                   |
+|-----------------------|----------------------------------|-----------------------------------------------|
+| `MCP_TRANSPORT`       | `stdio`                          | `stdio` or `http`                             |
+| `MCP_SERVER_NAME`     | `swebok-mcp`                     | Server name advertised to clients             |
+| `MCP_SERVER_VERSION`  | `0.1.0`                          | Server version advertised                     |
+| `MCP_HTTP_HOST`       | `127.0.0.1`                      | HTTP bind host (when HTTP is added)           |
+| `MCP_HTTP_PORT`       | `3000`                           | HTTP bind port (when HTTP is added)           |
+| `MCP_KB_PATH`         | `../KnowledgeBase`               | Knowledge base folder (contains `chunks.jsonl`) |
+| `MCP_EMBEDDING_MODEL` | `Xenova/bge-small-en-v1.5`       | transformers.js model id                      |
+| `MCP_QUERY_PREFIX`    | `Represent this sentence ...`    | BGE instruction prefix for queries            |
+| `MCP_DEFAULT_TOP_K`   | `5`                              | Default number of passages a search returns   |
 
 ## Register in VS Code (example)
 
@@ -87,11 +139,13 @@ After `npm run build`, add an `.vscode/mcp.json` (workspace) entry:
 }
 ```
 
-## Where to add capabilities
+## Adding a capability
 
-- **Tools** -> [`src/tools/index.ts`](src/tools/index.ts) (`server.registerTool(...)`)
+- **Tools** — create a class implementing [`ServerTool`](src/tools/serverTool.ts)
+  (`@injectable`, dependencies via constructor, a `register(server)` method), then
+  add one binding in [`src/di/container.ts`](src/di/container.ts):
+  `container.bind<ServerTool>(TYPES.ServerTool).to(YourTool)`. `ServerFactory`
+  picks it up automatically via `@multiInject`.
 - **Resources** -> [`src/resources/index.ts`](src/resources/index.ts)
 - **Prompts** -> [`src/prompts/index.ts`](src/prompts/index.ts)
-
-Each `register*` function currently does nothing; implement inside and it is
-picked up automatically by `createServer()`.
+- **Completions** -> [`src/completions/index.ts`](src/completions/index.ts)
