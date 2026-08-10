@@ -10,6 +10,7 @@ import hashlib
 import re
 
 from ..models import Section, Document, Chunk
+from ..figures import figure_refs
 
 _SENT_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9])")
 
@@ -56,6 +57,7 @@ class StructureChunker:
                         language="en",
                         token_count=_tokens(text),
                         checksum=checksum,
+                        figure_refs=figure_refs(text),
                     )
                 )
         return chunks

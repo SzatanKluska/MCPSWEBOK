@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "swebok-mcp": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${workspaceFolder}/Server/dist/index.js"]
+    }
+  }
+}

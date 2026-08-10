@@ -11,6 +11,7 @@ import { inject, injectable } from "inversify";
 
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Retriever } from "../rag/retriever.js";
+import type { Figure } from "../rag/types.js";
 import type { ServerTool } from "./serverTool.js";
 
 interface SearchResult {
@@ -23,6 +24,7 @@ interface SearchResult {
   page_start: number | null;
   page_end: number | null;
   section_heading: string | null;
+  figures: Figure[];
 }
 
 function citation(r: SearchResult): string {
@@ -36,8 +38,20 @@ function citation(r: SearchResult): string {
   return `[${r.ka_name ?? "?"} > ${topic}, ${r.source_id}${pages}]`;
 }
 
+function formatFigure(f: Figure): string {
+  const parts = [`Figure ${f.figure_id}. ${f.caption}`, f.description];
+  if (f.mermaid) {
+    parts.push("```mermaid\n" + f.mermaid + "\n```");
+  }
+  return parts.join("\n");
+}
+
 function formatResult(r: SearchResult): string {
-  return `#${r.rank} (score ${r.score.toFixed(3)}) ${citation(r)}\n${r.text}`;
+  const head = `#${r.rank} (score ${r.score.toFixed(3)}) ${citation(r)}\n${r.text}`;
+  if (r.figures.length === 0) {
+    return head;
+  }
+  return head + "\n\n" + r.figures.map(formatFigure).join("\n\n");
 }
 
 @injectable()
@@ -80,6 +94,19 @@ export class SwebokSearchTool implements ServerTool {
               page_start: z.number().nullable(),
               page_end: z.number().nullable(),
               section_heading: z.string().nullable(),
+              figures: z.array(
+                z.object({
+                  figure_id: z.string(),
+                  caption: z.string(),
+                  source_id: z.string(),
+                  ka_id: z.string().nullable(),
+                  ka_name: z.string().nullable(),
+                  page: z.number().nullable(),
+                  image: z.string(),
+                  description: z.string(),
+                  mermaid: z.string().nullable(),
+                }),
+              ),
             }),
           ),
         }),
@@ -97,6 +124,7 @@ export class SwebokSearchTool implements ServerTool {
           page_start: hit.chunk.page_start,
           page_end: hit.chunk.page_end,
           section_heading: hit.chunk.section_heading,
+          figures: this.retriever.figuresFor(hit.chunk.figure_refs),
         }));
 
         const text =
@@ -104,10 +132,28 @@ export class SwebokSearchTool implements ServerTool {
             ? results.map(formatResult).join("\n\n")
             : `No SWEBOK passages found for "${query}".`;
 
-        return {
-          content: [{ type: "text", text }],
-          structuredContent: { results },
-        };
+        const content: (
+          | { type: "text"; text: string }
+          | { type: "image"; data: string; mimeType: string }
+        )[] = [{ type: "text", text }];
+
+        // Append the image only for figures without a Mermaid diagram, so
+        // clients can still render those (e.g. quantitative graphs).
+        const seen = new Set<string>();
+        for (const r of results) {
+          for (const f of r.figures) {
+            if (seen.has(f.figure_id)) continue;
+            seen.add(f.figure_id);
+            if (f.mermaid) continue;
+            const img = this.retriever.figureImage(f);
+            if (img) {
+              content.push({ type: "text", text: `Figure ${f.figure_id}. ${f.caption}` });
+              content.push({ type: "image", data: img.data, mimeType: img.mimeType });
+            }
+          }
+        }
+
+        return { content, structuredContent: { results } };
       },
     );
   }

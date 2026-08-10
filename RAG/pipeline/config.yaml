@@ -5,6 +5,7 @@
 paths:
   raw_materials: ../RawMaterials
   taxonomy: ./taxonomy/swebok_v4.yaml
+  figures: ./figures                  # authored figure sidecars (input, per source_id)
   output: ./output                    # internal artifacts (QA report)
   knowledge_base: ../../KnowledgeBase # handoff contract consumed by the MCP server
 

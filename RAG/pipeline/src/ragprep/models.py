@@ -66,6 +66,28 @@ class Chunk:
     language: str
     token_count: int
     checksum: str
+    figure_refs: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class Figure:
+    """A figure record: authored description/diagram for a source figure.
+
+    Kept out of the embedded search index; the server attaches it to hits whose
+    text references the figure (join by reference).
+    """
+    figure_id: str
+    caption: str
+    source_id: str
+    ka_id: str
+    ka_name: str
+    page: int
+    image: str
+    description: str
+    mermaid: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

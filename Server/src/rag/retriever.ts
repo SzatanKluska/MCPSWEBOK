@@ -17,12 +17,14 @@ import type { Config } from "../config.js";
 import { TYPES } from "../di/types.js";
 import { Embedder } from "./embedder.js";
 import { loadChunks } from "./knowledgeBase.js";
-import type { Hit } from "./types.js";
+import { loadFigures, readFigureImage } from "./figures.js";
+import type { Figure, Hit } from "./types.js";
 import { VectorStore } from "./vectorStore.js";
 
 @injectable()
 export class Retriever {
   private store: VectorStore | null = null;
+  private figures = new Map<string, Figure>();
   private count = 0;
   readonly defaultTopK: number;
 
@@ -53,7 +55,28 @@ export class Retriever {
       chunks.map((c) => c.text),
     );
     this.store = new VectorStore(chunks, vectors);
+    this.figures = loadFigures(join(this.config.knowledgeBasePath, "figures.jsonl"));
     this.count = chunks.length;
+  }
+
+  /** Figures referenced by the given ids (e.g. from a chunk's `figure_refs`). */
+  figuresFor(figureRefs: string[] | undefined): Figure[] {
+    if (!figureRefs) {
+      return [];
+    }
+    const found: Figure[] = [];
+    for (const id of figureRefs) {
+      const figure = this.figures.get(id);
+      if (figure) {
+        found.push(figure);
+      }
+    }
+    return found;
+  }
+
+  /** Reads a figure's image bytes (base64 + mime) from the knowledge base. */
+  figureImage(figure: Figure): { data: string; mimeType: string } | null {
+    return readFigureImage(this.config.knowledgeBasePath, figure);
   }
 
   /** Embeds the query and returns the top-k most similar chunks. */

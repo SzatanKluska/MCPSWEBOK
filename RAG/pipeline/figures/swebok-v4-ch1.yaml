@@ -1,0 +1,166 @@
+# Figure definitions for SWEBOK v4.0, Chapter 1 "Software Requirements".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "1.1"
+    caption: "Breakdown of Topics for the Software Requirements KA"
+    page: 3
+    image: "figures/figure-1-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Requirements Knowledge Area into its
+      eight top-level topics and their subtopics: (1) Software Requirements
+      Fundamentals, (2) Requirements Elicitation, (3) Requirements Analysis,
+      (4) Requirements Specification, (5) Requirements Validation, (6) Requirements
+      Management Activities, (7) Practical Considerations, and (8) Software
+      Requirements Tools. Each top-level topic decomposes into the subtopics
+      covered in this KA.
+    mermaid: |
+      flowchart LR
+        SR["Software Requirements"]
+        SR --> F["1. Software Requirements Fundamentals"]
+        SR --> E["2. Requirements Elicitation"]
+        SR --> A["3. Requirements Analysis"]
+        SR --> S["4. Requirements Specification"]
+        SR --> V["5. Requirements Validation"]
+        SR --> M["6. Requirements Management Activities"]
+        SR --> P["7. Practical Considerations"]
+        SR --> T["8. Software Requirements Tools"]
+        F --> F1["Definition of a Software Requirement"]
+        F --> F2["Categories of Software Requirements"]
+        F --> F3["Software Product Requirements and Software Project Requirements"]
+        F --> F4["Functional Requirements"]
+        F --> F5["Nonfunctional Requirements"]
+        F --> F6["Technology Constraints"]
+        F --> F7["Quality of Service Constraints"]
+        F --> F8["Why Categorize Requirements This Way?"]
+        F --> F9["System Requirements and Software Requirements"]
+        F --> F10["Derived Requirements"]
+        F --> F11["Software Requirements Activities"]
+        E --> E1["Requirements Sources"]
+        E --> E2["Common Requirements Elicitation Techniques"]
+        A --> A1["Basic Requirements Analysis"]
+        A --> A2["Economics of Quality of Service Constraints"]
+        A --> A3["Formal Analysis"]
+        A --> A4["Addressing Conflict in Requirements"]
+        S --> S1["Unstructured Natural Language Requirements Specification"]
+        S --> S2["Structured Natural Language Requirements Specification"]
+        S --> S3["Acceptance Criteria-based Requirements Specification"]
+        S --> S4["Model-Based Requirements Specification"]
+        S --> S5["Additional Attributes of Requirements"]
+        S --> S6["Incremental and Comprehensive Requirements Specification"]
+        V --> V1["Requirements Reviews"]
+        V --> V2["Simulation and Execution"]
+        V --> V3["Prototyping"]
+        M --> M1["Requirements Scrubbing"]
+        M --> M2["Requirements Change Control"]
+        M --> M3["Scope Matching"]
+        P --> P1["Iterative Nature of the Requirements Process"]
+        P --> P2["Requirements Prioritization"]
+        P --> P3["Requirements Tracing"]
+        P --> P4["Requirements Stability and Volatility"]
+        P --> P5["Measuring Requirements"]
+        P --> P6["Requirements Process Quality and Improvement"]
+        T --> T1["Requirements Management Tools"]
+        T --> T2["Requirements Modeling Tools"]
+        T --> T3["Functional Test Case Generation Tools"]
+
+  - id: "1.2"
+    caption: "Categories of Software Requirements"
+    page: 4
+    image: "figures/figure-1-2.jpg"
+    description: >-
+      Classification of software requirements and the relationships among the
+      categories. Software Requirements split into Software Project Requirements
+      and Software Product Requirements. Software Product Requirements are further
+      divided into Functional Requirements and Nonfunctional Requirements;
+      Nonfunctional Requirements are subdivided into Technology Constraints and
+      Quality of Service Constraints.
+    mermaid: |
+      flowchart TD
+        SR["Software Requirements"]
+        SR --> PJ["Software Project Requirements"]
+        SR --> PD["Software Product Requirements"]
+        PD --> FN["Functional Requirements"]
+        PD --> NF["Nonfunctional Requirements"]
+        NF --> TC["Technology Constraints"]
+        NF --> QS["Quality of Service Constraints"]
+
+  - id: "1.3"
+    caption: "Software Requirements Activities"
+    page: 6
+    image: "figures/figure-1-3.jpg"
+    description: >-
+      The requirements activities. Requirements work comprises Requirements
+      Development — reaching agreement on what software is to be constructed,
+      consisting of Elicitation, Analysis, Specification and Validation — and
+      Requirements Management — maintaining that agreement over time, consisting
+      of Scrubbing, Change Control and Scope Matching.
+    mermaid: |
+      flowchart TD
+        R["Requirements"]
+        R --> D["Requirements Development"]
+        R --> G["Requirements Management"]
+        D --> D1["Elicitation"]
+        D --> D2["Analysis"]
+        D --> D3["Specification"]
+        D --> D4["Validation"]
+        G --> G1["Scrubbing"]
+        G --> G2["Change Control"]
+        G --> G3["Scope Matching"]
+
+  - id: "1.4"
+    caption: "Value as a Function of Level of Performance"
+    page: 9
+    image: "figures/figure-1-4.jpg"
+    description: >-
+      A conceptual graph of stakeholder value (y-axis) as a function of a quality
+      of service constraint's level of performance (x-axis), for constraints whose
+      value increases with performance (e.g., capacity, throughput, reliability).
+      The S-shaped value curve has two key points: the Fail point — the least
+      favorable performance level, below which there is no further reduction in
+      benefit — and the Perfection point — the most favorable level, beyond which
+      there is no additional benefit. For constraints whose value decreases as
+      performance increases (e.g., response time, mean time to repair), the curve
+      is mirrored vertically.
+    mermaid: null
+
+  - id: "1.5"
+    caption: "Most Cost-Effective Level of Performance"
+    page: 9
+    image: "figures/figure-1-5.jpg"
+    description: >-
+      A conceptual graph plotting two curves against level of performance (x-axis):
+      the stakeholder Value curve (smooth, S-shaped) and the Cost to deliver curve
+      (a rising step function, because each increment of performance requires a
+      discrete jump in investment). The most cost-effective level of performance is
+      the point where the positive difference between value and cost to deliver is
+      greatest.
+    mermaid: null
+
+  - id: "1.6"
+    caption: "Example of Structured Natural Language Specification for a Single Use Case"
+    page: 12
+    image: "figures/figure-1-6.jpg"
+    description: |-
+      An example of a structured natural language requirements specification for a
+      single use case (use case #66, "Reserve flight(s)"). The template captures
+      the following fields:
+
+      | Field | Content |
+      |---|---|
+      | Use case name | Reserve flight(s) |
+      | Triggering event(s) | Customer requests reservation(s) on flight(s) |
+      | Parameters | Passenger, itinerary, fare class, payment method(s) |
+      | Requires | Legal itinerary, fare class restrictions met |
+      | Guarantees | Seat(s) reserved for passenger on itinerary flight(s) |
+      | Normal course | Non-FF passenger, all domestic itinerary, Economy fare class, credit/debit card |
+      | Alternative course(s) | FF passenger [None, Silver, Gold, Platinum, Elite]; Itinerary [all international, mixed domestic + international]; Fare class [Basic economy, Premium Economy, Business, First]; Payment method [Voucher, FF miles] |
+      | Exceptions | C/D card declined, voucher doesn't exist, voucher expired, FF account doesn't exist, insufficient miles in FF account |
+    mermaid: null

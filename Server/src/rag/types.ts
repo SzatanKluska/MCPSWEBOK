@@ -21,6 +21,25 @@ export interface Chunk {
   language: string | null;
   token_count: number | null;
   checksum: string | null;
+  /** Figure ids (e.g. "1.2") this chunk's text references; joined at retrieval. */
+  figure_refs?: string[];
+}
+
+/**
+ * A figure record from `figures.jsonl` — authored description/diagram for a
+ * source figure. Not embedded in the search index; attached to hits whose text
+ * references it (join by reference).
+ */
+export interface Figure {
+  figure_id: string;
+  caption: string;
+  source_id: string;
+  ka_id: string | null;
+  ka_name: string | null;
+  page: number | null;
+  image: string;
+  description: string;
+  mermaid: string | null;
 }
 
 /** A single retrieval result: a chunk and its similarity score (higher = closer). */

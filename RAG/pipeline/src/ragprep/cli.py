@@ -13,8 +13,11 @@ import json
 import os
 import sys
 
+import yaml
+
 from .config import load_config
 from . import factory
+from .figures import load_figures
 from .pipeline import Pipeline
 
 _CONFIG = os.path.join(os.path.dirname(__file__), "..", "..", "config.yaml")
@@ -38,7 +41,7 @@ def _build_pipeline(cfg, with_vectors: bool) -> Pipeline:
 
 def _source_files(cfg) -> list[str]:
     raw = cfg.path("paths", "raw_materials")
-    return sorted(glob.glob(os.path.join(raw, "*.pdf")))
+    return sorted(glob.glob(os.path.join(raw, "**", "*.pdf"), recursive=True))
 
 
 def _prepare_all(cfg, pipeline: Pipeline):
@@ -56,17 +59,35 @@ def _prepare_all(cfg, pipeline: Pipeline):
     return results
 
 
+def _collect_figures(cfg, results):
+    with open(cfg.path("paths", "taxonomy"), encoding="utf-8") as fh:
+        tax = yaml.safe_load(fh)
+    figures_dir = cfg.path("paths", "figures")
+    figures = []
+    for r in results:
+        figures.extend(
+            load_figures(figures_dir, r.document.source_id,
+                         tax["ka_id"], tax["ka_name"])
+        )
+    return figures
+
+
 def _write_outputs(cfg, results):
     out_dir = cfg.path("paths", "output")
     kb_dir = cfg.path("paths", "knowledge_base")
     os.makedirs(out_dir, exist_ok=True)
     os.makedirs(kb_dir, exist_ok=True)
     chunks_path = os.path.join(kb_dir, "chunks.jsonl")
+    figures_path = os.path.join(kb_dir, "figures.jsonl")
     report_path = os.path.join(out_dir, "quality_report.json")
     all_chunks = [c for r in results for c in r.chunks]
     with open(chunks_path, "w", encoding="utf-8") as fh:
         for c in all_chunks:
             fh.write(json.dumps(c.to_dict(), ensure_ascii=False) + "\n")
+    figures = _collect_figures(cfg, results)
+    with open(figures_path, "w", encoding="utf-8") as fh:
+        for f in figures:
+            fh.write(json.dumps(f.to_dict(), ensure_ascii=False) + "\n")
     merged = {
         "sources": [r.document.source_id for r in results],
         "reports": [
