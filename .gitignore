@@ -9,7 +9,9 @@ __pycache__/
 KnowledgeBasePipeline/output/
 
 # Generated knowledge base (handoff artifact: chunks + vectors)
-KnowledgeBase/
+# Leading slash anchors this to the repo root only, so it does NOT also ignore
+# the Server's src/infrastructure/knowledgeBase/ source folder.
+/KnowledgeBase/
 
 # Model cache
 .cache/
