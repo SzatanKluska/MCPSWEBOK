@@ -1,5 +1,5 @@
 <!-- system-class-diagram
-commit: fd9f1a61d7bac93cc78c5f5e93ac077c35c5107a
+commit: b17f9053050754fca627c01862e264cf39e85db5
 updated: 2026-08-13
 -->
 # System Class Diagram
@@ -363,5 +363,6 @@ classDiagram
 ## Changelog
 | Date | Commit range | Summary |
 |------|--------------|---------|
+| 2026-08-13 | fd9f1a6..b17f905 | Re-anchor. `ChunkFileSource`/`FigureFileSource` (previously git-ignored, now tracked) were already represented; other changes were skill/tooling/docs only — no diagram body change. |
 | 2026-08-13 | fd9f1a6 (correction) | One node per file: split MCP registrars (figure resources / swebokExplain prompt / completions / sampling) and transport (factory / stdio / http); add CLI, entrypoint (Main), figure-extract tool, DI tokens. |
 | 2026-08-13 | initial @ fd9f1a6 | Initial diagram: KnowledgeBasePipeline ports/adapters (Python) + Server layered/hexagonal architecture (TypeScript MCP). |
