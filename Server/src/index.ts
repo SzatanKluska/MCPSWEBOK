@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import "reflect-metadata";
 
-import { loadConfig, type Config } from "./config.js";
+import { loadConfig, type Config } from "./config/config.js";
 import { buildContainer } from "./di/container.js";
-import { Retriever } from "./rag/retriever.js";
-import { ServerFactory } from "./server.js";
-import { createTransport } from "./transport/index.js";
+import { Retriever } from "./application/retriever.js";
+import { ServerFactory } from "./interface/mcp/serverFactory.js";
+import { createTransport } from "./infrastructure/transport/index.js";
 
 async function main(): Promise<void> {
   const config = loadConfig();

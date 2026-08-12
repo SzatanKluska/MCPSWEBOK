@@ -171,11 +171,12 @@ sequenceDiagram
 
 | File | Role |
 |---|---|
-| [`src/tools/swebokSearchTool.ts`](../../src/tools/swebokSearchTool.ts) | Tool class, input/output schema, handler. |
-| [`src/rag/retriever.ts`](../../src/rag/retriever.ts) | Combines the embedder and vector store; `search(query, k)`. |
-| [`src/rag/embedder.ts`](../../src/rag/embedder.ts) | Query embedding via transformers.js (ONNX). |
-| [`src/rag/vectorStore.ts`](../../src/rag/vectorStore.ts) | In-memory cosine search. |
-| [`src/rag/knowledgeBase.ts`](../../src/rag/knowledgeBase.ts) | Loads `chunks.jsonl` (the searched corpus). |
+| [`src/interface/mcp/tools/swebokSearchTool.ts`](../../src/interface/mcp/tools/swebokSearchTool.ts) | Tool class, input/output schema, handler. |
+| [`src/application/retriever.ts`](../../src/application/retriever.ts) | Retrieval use case; `search(query, k)` over the ports. |
+| [`src/domain/retrieval.ts`](../../src/domain/retrieval.ts) | Retrieval ports + policies (`figuresForRefs`, `citationOf`). |
+| [`src/infrastructure/embedding/transformersEmbedder.ts`](../../src/infrastructure/embedding/transformersEmbedder.ts) | Query embedding via transformers.js (ONNX). |
+| [`src/infrastructure/index/inMemoryVectorIndex.ts`](../../src/infrastructure/index/inMemoryVectorIndex.ts) | In-memory cosine search. |
+| [`src/infrastructure/knowledgeBase/chunkFileSource.ts`](../../src/infrastructure/knowledgeBase/chunkFileSource.ts) | Loads `chunks.jsonl` (the searched corpus). |
 
 ---
 

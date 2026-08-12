@@ -9,4 +9,8 @@
 export const TYPES = {
   Config: Symbol.for("swebok.Config"),
   ServerTool: Symbol.for("swebok.ServerTool"),
+  Embedder: Symbol.for("swebok.Embedder"),
+  ChunkSource: Symbol.for("swebok.ChunkSource"),
+  FigureStore: Symbol.for("swebok.FigureStore"),
+  VectorIndex: Symbol.for("swebok.VectorIndex"),
 } as const;
