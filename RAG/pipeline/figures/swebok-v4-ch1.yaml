@@ -120,15 +120,19 @@ figures:
     page: 9
     image: "figures/figure-1-4.jpg"
     description: >-
-      A conceptual graph of stakeholder value (y-axis) as a function of a quality
-      of service constraint's level of performance (x-axis), for constraints whose
-      value increases with performance (e.g., capacity, throughput, reliability).
-      The S-shaped value curve has two key points: the Fail point — the least
-      favorable performance level, below which there is no further reduction in
-      benefit — and the Perfection point — the most favorable level, beyond which
-      there is no additional benefit. For constraints whose value decreases as
-      performance increases (e.g., response time, mean time to repair), the curve
-      is mirrored vertically.
+      A plot of Value (vertical axis) against Level of Performance (horizontal
+      axis), with no numeric scale — it shows a relationship, not data. The value
+      curve is S-shaped: it stays low and nearly flat at low performance, rises
+      steeply as performance increases, then levels off into a plateau at high
+      performance. Two points are marked on the curve. The "Fail" point is at the
+      lower knee: the least-favourable performance level, below which reducing
+      performance further yields essentially no further loss of value. The
+      "Perfection" point is at the upper knee: the most-favourable level, beyond
+      which higher performance adds essentially no further value. This depicts a
+      quality-of-service constraint whose value increases with performance (e.g.,
+      capacity, throughput, reliability); for constraints whose value decreases
+      as performance increases (e.g., response time, mean time to repair), the
+      same curve is mirrored.
     mermaid: null
 
   - id: "1.5"
@@ -136,12 +140,16 @@ figures:
     page: 9
     image: "figures/figure-1-5.jpg"
     description: >-
-      A conceptual graph plotting two curves against level of performance (x-axis):
-      the stakeholder Value curve (smooth, S-shaped) and the Cost to deliver curve
-      (a rising step function, because each increment of performance requires a
-      discrete jump in investment). The most cost-effective level of performance is
-      the point where the positive difference between value and cost to deliver is
-      greatest.
+      A plot of two quantities measured in money ($, vertical axis) against Level
+      of Performance (horizontal axis), with no numeric scale. One curve is
+      Value: an S-shape that is low at low performance, rises steeply in the
+      middle, and plateaus at high performance (the same shape as Figure 1.4).
+      The other curve is Cost to deliver: a rising step function — cost stays
+      flat, then jumps up to a higher level, then jumps again — because each
+      increment of achievable performance requires a discrete jump in investment.
+      The marked "most cost-effective level of performance" is the point on the
+      horizontal axis where the vertical distance between Value and Cost (value
+      minus cost) is greatest, i.e., where net benefit is maximised.
     mermaid: null
 
   - id: "1.6"

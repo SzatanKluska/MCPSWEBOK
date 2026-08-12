@@ -11,6 +11,7 @@ import { inject, injectable } from "inversify";
 
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Retriever } from "../rag/retriever.js";
+import { figureUri } from "../rag/figures.js";
 import type { Figure } from "../rag/types.js";
 import type { ServerTool } from "./serverTool.js";
 
@@ -134,22 +135,28 @@ export class SwebokSearchTool implements ServerTool {
 
         const content: (
           | { type: "text"; text: string }
-          | { type: "image"; data: string; mimeType: string }
+          | {
+              type: "resource_link";
+              uri: string;
+              name: string;
+              description?: string;
+              mimeType?: string;
+            }
         )[] = [{ type: "text", text }];
 
-        // Append the image only for figures without a Mermaid diagram, so
-        // clients can still render those (e.g. quantitative graphs).
+        // Point at each referenced figure's image resource (fetched on demand).
         const seen = new Set<string>();
         for (const r of results) {
           for (const f of r.figures) {
             if (seen.has(f.figure_id)) continue;
             seen.add(f.figure_id);
-            if (f.mermaid) continue;
-            const img = this.retriever.figureImage(f);
-            if (img) {
-              content.push({ type: "text", text: `Figure ${f.figure_id}. ${f.caption}` });
-              content.push({ type: "image", data: img.data, mimeType: img.mimeType });
-            }
+            content.push({
+              type: "resource_link",
+              uri: figureUri(f.figure_id),
+              name: `Figure ${f.figure_id}. ${f.caption}`,
+              description: `Source image for Figure ${f.figure_id} (JPEG).`,
+              mimeType: "image/jpeg",
+            });
           }
         }
 

@@ -1,12 +1,35 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 
+import type { Retriever } from "../rag/retriever.js";
+import { figureUri } from "../rag/figures.js";
+
 /**
- * Registers MCP resources on the server.
- *
- * TODO: expose SWEBOK artifacts here (e.g. chunks, taxonomy) as resources.
- *
- * Intentionally empty in the skeleton.
+ * Registers SWEBOK figures as readable MCP resources — one per figure, at
+ * `swebok://figure/{id}`. Reading a resource returns the figure's image bytes.
+ * The search tool points at these via `resource_link`, so image bytes are
+ * fetched on demand rather than embedded in every response.
  */
-export function registerResources(_server: McpServer): void {
-  // no resources yet
+export function registerResources(server: McpServer, retriever: Retriever): void {
+  for (const figure of retriever.allFigures()) {
+    server.registerResource(
+      `figure-${figure.figure_id}`,
+      figureUri(figure.figure_id),
+      {
+        title: `Figure ${figure.figure_id}. ${figure.caption}`,
+        description: figure.description,
+        mimeType: "image/jpeg",
+      },
+      async (uri) => {
+        const img = retriever.figureImage(figure);
+        if (!img) {
+          throw new Error(`Image for figure ${figure.figure_id} not found.`);
+        }
+        return {
+          contents: [
+            { uri: uri.toString(), mimeType: img.mimeType, blob: img.data },
+          ],
+        };
+      },
+    );
+  }
 }

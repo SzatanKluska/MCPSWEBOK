@@ -10,6 +10,11 @@ import { join } from "node:path";
 
 import type { Figure } from "./types.js";
 
+/** Stable resource URI for a figure image (e.g. "swebok://figure/1.4"). */
+export function figureUri(id: string): string {
+  return `swebok://figure/${id}`;
+}
+
 export function loadFigures(path: string): Map<string, Figure> {
   const figures = new Map<string, Figure>();
   if (!existsSync(path)) {

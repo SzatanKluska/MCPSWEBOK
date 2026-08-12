@@ -79,6 +79,11 @@ export class Retriever {
     return readFigureImage(this.config.knowledgeBasePath, figure);
   }
 
+  /** All loaded figures (for exposing them as MCP resources). */
+  allFigures(): Figure[] {
+    return Array.from(this.figures.values());
+  }
+
   /** Embeds the query and returns the top-k most similar chunks. */
   async search(query: string, k: number): Promise<Hit[]> {
     if (this.store === null) {

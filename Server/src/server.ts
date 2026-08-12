@@ -3,6 +3,7 @@ import { inject, injectable, multiInject } from "inversify";
 
 import type { Config } from "./config.js";
 import { TYPES } from "./di/types.js";
+import { Retriever } from "./rag/retriever.js";
 import type { ServerTool } from "./tools/serverTool.js";
 import { registerResources } from "./resources/index.js";
 import { registerPrompts } from "./prompts/index.js";
@@ -27,6 +28,7 @@ import { registerCompletions } from "./completions/index.js";
 export class ServerFactory {
   constructor(
     @inject(TYPES.Config) private readonly config: Config,
+    @inject(Retriever) private readonly retriever: Retriever,
     @multiInject(TYPES.ServerTool) private readonly tools: ServerTool[],
   ) {}
 
@@ -39,7 +41,7 @@ export class ServerFactory {
     for (const tool of this.tools) {
       tool.register(server);
     }
-    registerResources(server);
+    registerResources(server, this.retriever);
     registerPrompts(server);
     registerCompletions(server);
 
