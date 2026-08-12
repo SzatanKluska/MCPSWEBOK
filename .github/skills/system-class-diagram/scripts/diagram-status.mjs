@@ -15,11 +15,15 @@ function out(obj) {
   for (const [k, v] of Object.entries(obj)) console.log(`${k}: ${v}`);
 }
 
-// Code files the diagram must cover (one node per file); excludes package markers.
+// True for a source file that must map to a diagram node (excludes package markers).
+function isSourceFile(f) {
+  return (f.startsWith("KnowledgeBasePipeline/kbprep/") || f.startsWith("Server/src/")) &&
+    (f.endsWith(".py") || f.endsWith(".ts")) && !f.endsWith("__init__.py");
+}
+
+// Code files the diagram must cover (one node per file).
 function inventory() {
-  return git("ls-files -- KnowledgeBasePipeline/kbprep Server/src")
-    .split(/\r?\n/)
-    .filter((f) => (f.endsWith(".py") || f.endsWith(".ts")) && !f.endsWith("__init__.py"));
+  return git("ls-files -- KnowledgeBasePipeline/kbprep Server/src").split(/\r?\n/).filter(isSourceFile);
 }
 
 function printInventory() {
@@ -70,9 +74,22 @@ if (stored === head) {
   process.exit(0);
 }
 
+const changed = git(`diff --name-status ${stored} ${head}`);
+const changedPaths = changed.split(/\r?\n/).flatMap((l) => l.split(/\t/).slice(1)).filter(Boolean);
+const sourceChanged = changedPaths.filter(isSourceFile);
+
+// Only docs/tooling changed since STORED -> the diagram body still reflects the code.
+if (sourceChanged.length === 0) {
+  out({ MODE: "up-to-date", DIAGRAM: rel, HEAD: head, HEAD_SHORT: headShort, STORED: stored,
+        NOTE: "only docs/tooling changed since STORED; no source files affected" });
+  process.exit(0);
+}
+
 out({ MODE: "update", DIAGRAM: rel, HEAD: head, HEAD_SHORT: headShort, STORED: stored });
-console.log("--- CHANGED FILES ---");
-console.log(git(`diff --name-status ${stored} ${head}`) || "(none)");
+console.log("--- CHANGED SOURCE FILES ---");
+console.log(sourceChanged.join("\n"));
+console.log("--- ALL CHANGED FILES ---");
+console.log(changed || "(none)");
 console.log("--- COMMITS ---");
 console.log(git(`log --oneline ${stored}..${head}`) || "(none)");
 printInventory();

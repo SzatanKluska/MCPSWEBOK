@@ -37,7 +37,10 @@ node .github/skills/system-class-diagram/scripts/diagram-status.mjs [diagramPath
 ```
 It prints `MODE: create` | `update` | `up-to-date`, plus `HEAD`, the stored
 `STORED` commit, (for updates) the changed files and commit list, and a
-**SOURCE INVENTORY** — the code files the diagram must cover. Then:
+**SOURCE INVENTORY** — the code files the diagram must cover. `update` triggers
+only when a **source** file changed between `STORED` and `HEAD`; commits touching
+only docs/tooling (including the diagram itself) report `up-to-date`, so
+committing the diagram never loops. Then:
 
 - **up-to-date** → tell the user the diagram already matches `HEAD`; stop.
 - **create** → go to step 2.
