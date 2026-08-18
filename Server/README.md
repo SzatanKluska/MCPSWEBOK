@@ -58,7 +58,8 @@ Server/
       tools/serverTool.ts       # ServerTool interface (register(server))
       tools/swebokSearchTool.ts # swebok_search tool (injectable class)
       resources/figures.ts      # registerResources() + figureUri (figure image resources)
-      prompts/swebokExplain.ts  # registerPrompts() — swebok-explain
+      prompts/swebokExplain.ts     # registerPrompts() — swebok-explain
+      prompts/swebokSkillMaker.ts  # registerSwebokSkillMakerPrompt() — swebok-skill-maker
       completions/completions.ts# registerCompletions() (auto-activated by SDK)
       sampling/sampling.ts      # requestSampling() helper
 ```
@@ -170,5 +171,9 @@ After `npm run build`, add an `.vscode/mcp.json` (workspace) entry:
   `container.bind<ServerTool>(TYPES.ServerTool).to(YourTool)`. `ServerFactory`
   picks it up automatically via `@multiInject`.
 - **Resources** -> [`src/interface/mcp/resources/figures.ts`](src/interface/mcp/resources/figures.ts)
-- **Prompts** -> [`src/interface/mcp/prompts/swebokExplain.ts`](src/interface/mcp/prompts/swebokExplain.ts)
+- **Prompts** -> each prompt gets its own file under `src/interface/mcp/prompts/`
+  (e.g. [`swebokExplain.ts`](src/interface/mcp/prompts/swebokExplain.ts),
+  [`swebokSkillMaker.ts`](src/interface/mcp/prompts/swebokSkillMaker.ts)) with an
+  `instruction()` builder and a `registerXxxPrompt(server)` function, wired with
+  one call in [`ServerFactory.create()`](src/interface/mcp/serverFactory.ts).
 - **Completions** -> [`src/interface/mcp/completions/completions.ts`](src/interface/mcp/completions/completions.ts)

@@ -7,6 +7,7 @@ import { Retriever } from "../../application/retriever.js";
 import type { ServerTool } from "./tools/serverTool.js";
 import { registerResources } from "./resources/figures.js";
 import { registerPrompts } from "./prompts/swebokExplain.js";
+import { registerSwebokSkillMakerPrompt } from "./prompts/swebokSkillMaker.js";
 import { registerCompletions } from "./completions/completions.js";
 
 /**
@@ -20,6 +21,7 @@ import { registerCompletions } from "./completions/completions.js";
  *  - tools (ServerTool[])       — client calls server; each tool.register(server)
  *  - resources/figures.ts       — registerResources()   (client reads server data)
  *  - prompts/swebokExplain.ts   — registerPrompts()      (client uses server templates)
+ *  - prompts/swebokSkillMaker.ts — registerSwebokSkillMakerPrompt() (ditto)
  *  - completions/completions.ts — registerCompletions()  (argument autocompletion)
  *  - sampling/sampling.ts       — requestSampling()      (server asks client for LLM
  *                                 inference; NOT registered here — call from handlers)
@@ -43,6 +45,7 @@ export class ServerFactory {
     }
     registerResources(server, this.retriever);
     registerPrompts(server);
+    registerSwebokSkillMakerPrompt(server);
     registerCompletions(server);
 
     return server;
