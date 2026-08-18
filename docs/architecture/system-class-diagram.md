@@ -1,6 +1,6 @@
 <!-- system-class-diagram
-commit: b17f9053050754fca627c01862e264cf39e85db5
-updated: 2026-08-13
+commit: e4d121e7e8d5b81fd10919ddc852075e3092984f
+updated: 2026-08-18
 -->
 # System Class Diagram
 
@@ -273,6 +273,10 @@ classDiagram
       <<module>>
       +registerPrompts(server)
     }
+    class SwebokSkillMakerPrompt {
+      <<module>>
+      +registerSwebokSkillMakerPrompt(server)
+    }
     class Completions {
       <<module>>
       +registerCompletions(server)
@@ -336,6 +340,7 @@ classDiagram
   ServerFactory --> ServerTool
   ServerFactory ..> FigureResources
   ServerFactory ..> SwebokExplainPrompt
+  ServerFactory ..> SwebokSkillMakerPrompt
   ServerFactory ..> Completions
   FigureResources --> Retriever
 
@@ -363,6 +368,7 @@ classDiagram
 ## Changelog
 | Date | Commit range | Summary |
 |------|--------------|---------|
+| 2026-08-18 | b17f905..e4d121e | Add `SwebokSkillMakerPrompt` module node (`prompts/swebokSkillMaker.ts`, `registerSwebokSkillMakerPrompt(server)`) and its `ServerFactory ..> SwebokSkillMakerPrompt` edge, alongside the existing `SwebokExplainPrompt`. |
 | 2026-08-13 | fd9f1a6..b17f905 | Re-anchor. `ChunkFileSource`/`FigureFileSource` (previously git-ignored, now tracked) were already represented; other changes were skill/tooling/docs only — no diagram body change. |
 | 2026-08-13 | fd9f1a6 (correction) | One node per file: split MCP registrars (figure resources / swebokExplain prompt / completions / sampling) and transport (factory / stdio / http); add CLI, entrypoint (Main), figure-extract tool, DI tokens. |
 | 2026-08-13 | initial @ fd9f1a6 | Initial diagram: KnowledgeBasePipeline ports/adapters (Python) + Server layered/hexagonal architecture (TypeScript MCP). |
