@@ -11,9 +11,8 @@ from __future__ import annotations
 import glob
 import json
 import os
+import re
 import sys
-
-import yaml
 
 from .shared.config import load_config
 from .rag import factory
@@ -28,14 +27,31 @@ def _load():
     return cfg
 
 
-def _build_pipeline(cfg, with_vectors: bool) -> Pipeline:
+def _build_shared(cfg, with_vectors: bool) -> dict:
+    """Adapters reused across every source: extractor is stateless, embedder is
+    the expensive one (loads a model) so it must be built once, not per source."""
+    return {
+        "extractor": factory.build_extractor(cfg),
+        "embedder": factory.build_embedder(cfg) if with_vectors else None,
+        "vector_store": factory.build_vector_store(cfg) if with_vectors else None,
+    }
+
+
+def _build_pipeline_for_source(cfg, shared: dict, source_id: str) -> Pipeline:
+    """Mapper/chunker (and thus the cleaner's extra header pattern) depend on
+    the source's own taxonomy (ka_id/ka_name/topics), so these are rebuilt
+    per source; the shared, expensive-to-build adapters are reused as-is."""
+    mapper = factory.build_taxonomy_mapper(cfg, source_id)
+    header_pattern = rf"^{re.escape(mapper.ka_name.upper())}$"
+    cleaner = factory.build_cleaner(cfg, extra_drop_patterns=[header_pattern])
+    chunker = factory.build_chunker(cfg, source_id)
     return Pipeline(
-        extractor=factory.build_extractor(cfg),
-        cleaner=factory.build_cleaner(cfg),
-        mapper=factory.build_taxonomy_mapper(cfg),
-        chunker=factory.build_chunker(cfg),
-        embedder=factory.build_embedder(cfg) if with_vectors else None,
-        vector_store=factory.build_vector_store(cfg) if with_vectors else None,
+        extractor=shared["extractor"],
+        cleaner=cleaner,
+        mapper=mapper,
+        chunker=chunker,
+        embedder=shared["embedder"],
+        vector_store=shared["vector_store"],
     )
 
 
@@ -44,11 +60,12 @@ def _source_files(cfg) -> list[str]:
     return sorted(glob.glob(os.path.join(raw, "**", "*.pdf"), recursive=True))
 
 
-def _prepare_all(cfg, pipeline: Pipeline):
+def _prepare_all(cfg, shared: dict):
     q = cfg["quality"]
     results = []
     for path in _source_files(cfg):
         source_id = os.path.splitext(os.path.basename(path))[0]
+        pipeline = _build_pipeline_for_source(cfg, shared, source_id)
         result = pipeline.prepare(
             path, source_id,
             min_extraction_ratio=q["min_extraction_ratio"],
@@ -60,14 +77,15 @@ def _prepare_all(cfg, pipeline: Pipeline):
 
 
 def _collect_figures(cfg, results):
-    with open(cfg.path("paths", "taxonomy"), encoding="utf-8") as fh:
-        tax = yaml.safe_load(fh)
     figures_dir = cfg.path("paths", "figures")
     figures = []
     for r in results:
+        chunks = [c for c in r.chunks]
+        if not chunks:
+            continue
         figures.extend(
             load_figures(figures_dir, r.document.source_id,
-                         tax["ka_id"], tax["ka_name"])
+                         chunks[0].ka_id, chunks[0].ka_name)
         )
     return figures
 
@@ -114,8 +132,8 @@ def _print_report(results):
 
 def cmd_prepare():
     cfg = _load()
-    pipeline = _build_pipeline(cfg, with_vectors=False)
-    results = _prepare_all(cfg, pipeline)
+    shared = _build_shared(cfg, with_vectors=False)
+    results = _prepare_all(cfg, shared)
     chunks_path, report_path, all_chunks = _write_outputs(cfg, results)
     _print_report(results)
     print(f"\nWrote {len(all_chunks)} chunks -> {chunks_path}")
@@ -124,13 +142,28 @@ def cmd_prepare():
 
 def cmd_index():
     cfg = _load()
-    pipeline = _build_pipeline(cfg, with_vectors=True)
-    results = _prepare_all(cfg, pipeline)
+    shared = _build_shared(cfg, with_vectors=True)
+    results = _prepare_all(cfg, shared)
     chunks_path, report_path, all_chunks = _write_outputs(cfg, results)
     _print_report(results)
     print(f"\nEmbedding + indexing {len(all_chunks)} chunks ...")
-    pipeline.index(all_chunks)
+    Pipeline(
+        extractor=shared["extractor"], cleaner=None, mapper=None, chunker=None,
+        embedder=shared["embedder"], vector_store=shared["vector_store"],
+    ).index(all_chunks)
     print("Vector index built.")
+
+
+def _build_search_pipeline(cfg) -> Pipeline:
+    """Search spans the whole merged index (all sources already embedded by
+    `index`), so it needs only embedder + vector_store — no source_id to pick
+    a taxonomy/cleaner for. extractor/cleaner/mapper/chunker are unused by
+    `Pipeline.search`."""
+    return Pipeline(
+        extractor=None, cleaner=None, mapper=None, chunker=None,
+        embedder=factory.build_embedder(cfg),
+        vector_store=factory.build_vector_store(cfg),
+    )
 
 
 def _format_hit(chunk, score) -> str:
@@ -144,7 +177,7 @@ def _format_hit(chunk, score) -> str:
 
 def cmd_query(query: str):
     cfg = _load()
-    pipeline = _build_pipeline(cfg, with_vectors=True)
+    pipeline = _build_search_pipeline(cfg)
     # rebuild index if empty is out of scope; assume `index` ran first
     k = cfg["evaluation"]["top_k"]
     hits = pipeline.search(query, k)
@@ -155,8 +188,7 @@ def cmd_query(query: str):
 
 def cmd_eval():
     cfg = _load()
-    pipeline = _build_pipeline(cfg, with_vectors=True)
-    gs_path = os.path.join(cfg.path("paths", "output"), "..", "golden_set.json")
+    pipeline = _build_search_pipeline(cfg)
     gs_path = os.path.normpath(os.path.join(os.path.dirname(_CONFIG), "golden_set.json"))
     with open(gs_path, encoding="utf-8") as fh:
         golden = json.load(fh)
@@ -165,12 +197,15 @@ def cmd_eval():
     hits_at_k = 0
     for item in golden:
         results = pipeline.search(item["question"], k)
-        topics = {c.topic_id for c, _ in results}
-        ok = item["expected_topic"] in topics
+        # (ka_id, topic_id) pair: topic numbering restarts at 1 per KA, so a bare
+        # topic_id is ambiguous once the corpus spans more than one KA.
+        pairs = {(c.ka_id, c.topic_id) for c, _ in results}
+        expected = (item["expected_ka"], item["expected_topic"])
+        ok = expected in pairs
         hits_at_k += int(ok)
         mark = "[OK]" if ok else "[!!]"
-        print(f"{mark} '{item['question'][:60]}...' expected topic {item['expected_topic']} "
-              f"-> retrieved {sorted(t for t in topics if t)}")
+        print(f"{mark} '{item['question'][:60]}...' expected {expected} "
+              f"-> retrieved {sorted(p for p in pairs if p[1])}")
     recall = hits_at_k / len(golden)
     print(f"\nrecall@{k} (topic match): {recall:.2f}  (threshold {threshold})")
     print("EVAL PASS" if recall >= threshold else "EVAL FAIL")

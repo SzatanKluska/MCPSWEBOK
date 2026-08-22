@@ -1,0 +1,33 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 16: Computing Foundations
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-16
+ka_name: Computing Foundations
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Basic Concepts of a System or Solution
+- id: '2'
+  name: Computer Architecture and Organization
+  aliases:
+  - Architecture and Organization
+- id: '3'
+  name: Data Structures and Algorithms
+- id: '4'
+  name: Programming Fundamentals and Languages
+- id: '5'
+  name: Operating Systems
+- id: '6'
+  name: Database Management
+- id: '7'
+  name: Computer Networks and Communications
+  aliases:
+  - Networks and Communications
+- id: '8'
+  name: User and Developer Human Factors
+  aliases:
+  - Human Factors
+- id: '9'
+  name: Artificial Intelligence and Machine Learning
+  aliases:
+  - AI and Machine Learning

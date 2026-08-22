@@ -1,0 +1,23 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 2: Software Architecture
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-02
+ka_name: Software Architecture
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Architecture Fundamentals
+  aliases:
+  - Architecture Fundamentals
+- id: '2'
+  name: Software Architecture Description
+  aliases:
+  - Architecture Description
+- id: '3'
+  name: Software Architecture Process
+  aliases:
+  - Architecture Process
+- id: '4'
+  name: Software Architecture Evaluation
+  aliases:
+  - Architecture Evaluation

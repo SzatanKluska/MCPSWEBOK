@@ -1,0 +1,27 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 4: Software Construction
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-04
+ka_name: Software Construction
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Construction Fundamentals
+  aliases:
+  - Construction Fundamentals
+- id: '2'
+  name: Managing Construction
+  aliases:
+  - Construction Management
+- id: '3'
+  name: Practical Considerations
+  aliases:
+  - Practical Activities
+- id: '4'
+  name: Construction Technologies
+  aliases:
+  - Construction Tech
+- id: '5'
+  name: Software Construction Tools
+  aliases:
+  - Construction Tools

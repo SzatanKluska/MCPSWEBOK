@@ -1,0 +1,31 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 3: Software Design
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-03
+ka_name: Software Design
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Design Fundamentals
+  aliases:
+  - Design Fundamentals
+- id: '2'
+  name: Software Design Processes
+  aliases:
+  - Design Processes
+- id: '3'
+  name: Software Design Qualities
+  aliases:
+  - Design Qualities
+- id: '4'
+  name: Recording Software Designs
+  aliases:
+  - Recording Designs
+- id: '5'
+  name: Software Design Strategies and Methods
+  aliases:
+  - Design Strategies and Methods
+- id: '6'
+  name: Software Design Quality Analysis and Evaluation
+  aliases:
+  - Design Quality Analysis and Evaluation

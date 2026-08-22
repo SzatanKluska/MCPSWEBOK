@@ -1,0 +1,35 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 8: Software Configuration Management
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-08
+ka_name: Software Configuration Management
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Management of the SCM Process
+  aliases:
+  - SCM Process Management
+- id: '2'
+  name: Software Configuration Identification
+  aliases:
+  - Configuration Identification
+- id: '3'
+  name: Software Configuration Change Control
+  aliases:
+  - Configuration Change Control
+- id: '4'
+  name: Software Configuration Status Accounting
+  aliases:
+  - Configuration Status Accounting
+- id: '5'
+  name: Software Configuration Auditing
+  aliases:
+  - Configuration Auditing
+- id: '6'
+  name: Software Release Management and Delivery
+  aliases:
+  - Release Management and Delivery
+- id: '7'
+  name: Software Configuration Tools
+  aliases:
+  - Configuration Tools

@@ -1,0 +1,17 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 11: Software Engineering Models and Methods
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-11
+ka_name: Software Engineering Models and Methods
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Modeling
+- id: '2'
+  name: Types of Models
+- id: '3'
+  name: Analysis of Models
+- id: '4'
+  name: Software Engineering Methods
+  aliases:
+  - Engineering Methods

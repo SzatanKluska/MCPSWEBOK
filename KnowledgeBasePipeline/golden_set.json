@@ -1,26 +1,32 @@
 [
   {
     "question": "What are the main problems that cause requirements to be incomplete or ambiguous?",
+    "expected_ka": "SWEBOK-KA-01",
     "expected_topic": "1"
   },
   {
     "question": "How do software engineers gather requirements from stakeholders and identify requirement sources?",
+    "expected_ka": "SWEBOK-KA-01",
     "expected_topic": "2"
   },
   {
     "question": "How are requirements classified, and how is conflict between requirements resolved during analysis?",
+    "expected_ka": "SWEBOK-KA-01",
     "expected_topic": "3"
   },
   {
     "question": "What makes a good software requirements specification document?",
+    "expected_ka": "SWEBOK-KA-01",
     "expected_topic": "4"
   },
   {
     "question": "How are requirements reviewed and validated, for example through prototyping or acceptance tests?",
+    "expected_ka": "SWEBOK-KA-01",
     "expected_topic": "5"
   },
   {
     "question": "How are requirements managed and traced over the software service life?",
+    "expected_ka": "SWEBOK-KA-01",
     "expected_topic": "6"
   }
 ]

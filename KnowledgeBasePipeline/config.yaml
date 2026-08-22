@@ -4,7 +4,7 @@
 
 paths:
   raw_materials: ./RawMaterials
-  taxonomy: ./kbprep/rag/taxonomy/swebok_v4.yaml
+  taxonomy_dir: ./kbprep/rag/taxonomy   # one {source_id}.yaml per source (per KA/book)
   figures: ./kbprep/figures/sidecars  # authored figure sidecars (input, per source_id)
   output: ./output                    # internal artifacts (QA report)
   knowledge_base: ../KnowledgeBase    # handoff contract consumed by the MCP server
@@ -17,10 +17,12 @@ extractor:
 
 cleaner:
   provider: basic
-  drop_patterns:              # regex lines to remove (headers/footers)
+  drop_patterns:              # regex lines to remove (headers/footers), all sources
     - '^SWEBOK.*GUIDE.*V4'
     - '^\d+-\d+$'             # page numbers like 1-1
-    - '^SOFTWARE REQUIREMENTS$'
+  # Per-source running-header (the KA name in ALL CAPS on odd body pages) is
+  # added automatically at build time from that source's own taxonomy ka_name
+  # — see cli.py._build_pipeline_for_source — so it never needs listing here.
 
 chunker:
   provider: structure

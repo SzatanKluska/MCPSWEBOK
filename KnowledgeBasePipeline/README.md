@@ -32,8 +32,10 @@ core logic clean and independent of external technologies.
 extract → clean → map-taxonomy → chunk → embed → index → retrieve/eval
 ```
 
-Each stage is an adapter behind a port (see `kbprep/rag/ports.py`). The current
-POC scope is Chapter 1 (Software Requirements) of SWEBOK Guide V4.0.
+Each stage is an adapter behind a port (see `kbprep/rag/ports.py`). Scope is
+all 18 Knowledge Areas of SWEBOK Guide V4.0a, one PDF + one taxonomy per KA
+(see [Multi-source design](#multi-source-design)); external reference
+literature can be added the same way once it has its own taxonomy file.
 
 ## Stage Details
 
@@ -122,9 +124,13 @@ MCP Swebok/
       vectors.npz          #     (Numpy adapter) the numerical embedding vectors.
       vectors.jsonl        #     (Numpy adapter) the metadata for each vector.
   KnowledgeBasePipeline/
-    RawMaterials/          # source PDFs (input)
+    SourceBooks/           # whole, un-split master PDFs (NOT ingested directly —
+                           #   see Multi-source design; kept only so chapters can
+                           #   be re-split later, e.g. on a new SWEBOK version)
+    RawMaterials/          # source PDFs actually ingested (input), one per source_id
+      swebok/chapterN/swebok-v4-chN.pdf # one PDF per SWEBOK KA (N = 1..18)
     config.yaml            # technology choices live here, not in the core
-    golden_set.json        # evaluation questions (KA/topic ground truth)
+    golden_set.json        # evaluation questions ((KA, topic) ground truth)
     requirements.txt
     kbprep/                # the package (feature-based)
       cli.py               # prepare / index / query / eval commands
@@ -136,12 +142,12 @@ MCP Swebok/
         factory.py         # wires concrete adapters from config (DI point)
         quality.py         # automatic quality gates + report
         adapters/          # concrete implementations (pdfplumber, ST, numpy...)
-        taxonomy/swebok_v4.yaml # SWEBOK KA1 -> 8 topics
+        taxonomy/swebok-v4-ch{1..18}.yaml # one taxonomy per source_id (per KA)
       figures/             # Figures feature: images + sidecar join-by-reference
         models.py          # Figure record
         sidecar.py         # load authored sidecars + detect "Figure X.Y" refs
         extract.py         # render figure images (JPG) from the source PDF
-        sidecars/swebok-v4-ch1.yaml # authored figure content (input)
+        sidecars/swebok-v4-ch1.yaml # authored figure content (input; ch1 only so far)
     tests/test_contracts.py # every adapter must satisfy its port
     output/quality_report.json # Internal QA artifact (NOT part of the handoff)
 ```
@@ -150,6 +156,43 @@ MCP Swebok/
 > the top-level `KnowledgeBase/` folder — the explicit handoff contract between
 > this pipeline (producer) and the MCP server (consumer). Paths are configured in
 > `config.yaml` (`paths.knowledge_base`, `vector_store.persist_dir`).
+
+## Multi-source design
+
+The pipeline ingests **every** source under `RawMaterials/` (`prepare`/`index`
+glob `RawMaterials/**/*.pdf`), so each source needs its own taxonomy — topic
+numbering restarts at 1 within each SWEBOK KA (and an external book has no
+SWEBOK topic structure at all), so one global taxonomy file cannot describe
+more than one source correctly.
+
+- **Convention**: `config.yaml`'s `paths.taxonomy_dir` holds one
+  `{source_id}.yaml` per source, where `source_id` is the PDF's filename stem
+  (e.g. `RawMaterials/swebok/chapter3/swebok-v4-ch3.pdf` -> `swebok-v4-ch3`).
+  Missing a source's taxonomy file is a hard error (`factory._taxonomy_path`)
+  — fail fast rather than silently mislabeling a chunk's KA.
+- **Per-source pipeline**: `cli._build_pipeline_for_source` builds a fresh
+  `TaxonomyMapper` + `StructureChunker` (they need that source's `ka_id`/
+  `ka_name`/topics) and a fresh `BasicCleaner` with one extra drop-pattern
+  derived from the source's own `ka_name` (its ALL-CAPS running header on odd
+  body pages — confirmed consistent across all 18 SWEBOK chapters). The
+  expensive shared adapters (extractor, embedder, vector store) are built once
+  in `cli._build_shared` and reused across every source.
+- **Adding a SWEBOK-like source** (has its own numbered "N. Topic" headings):
+  add the PDF under `RawMaterials/...` and a matching
+  `kbprep/rag/taxonomy/{source_id}.yaml` (`ka_id`, `ka_name`,
+  `source_version`, `topics: [{id, name}, ...]`).
+- **Adding external reference literature** (no comparable topic structure):
+  same steps, but the taxonomy file can have an empty `topics: []` — every
+  chunk still gets correct `ka_id`/`ka_name` (source-level attribution),
+  `topic_id`/`topic_name` just stay unmapped (`null`), same as any
+  currently-unmatched section.
+- **Search across sources**: `query`/`eval` use `cli._build_search_pipeline`
+  (embedder + vector store only, source-agnostic) since retrieval spans the
+  whole merged index, not one source.
+- The 18 SWEBOK chapter PDFs were produced once from a single full-guide PDF
+  by `_split_chapters.py`; the taxonomies were derived from the guide's own
+  Table of Contents by `_gen_taxonomies.py` (both one-off scripts at the repo
+  root, kept for reference/re-use on a future SWEBOK version).
 
 ## Usage
 

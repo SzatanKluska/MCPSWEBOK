@@ -1,0 +1,33 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 15: Software Engineering Economics
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-15
+ka_name: Software Engineering Economics
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Engineering Economics Fundamentals
+  aliases:
+  - Economics Fundamentals
+- id: '2'
+  name: The Engineering Decision-Making Process
+  aliases:
+  - Engineering Decision-Making Process
+- id: '3'
+  name: For-Profit Decision-Making
+- id: '4'
+  name: Nonprofit Decision-Making
+- id: '5'
+  name: Present Economy Decision-Making
+- id: '6'
+  name: Multiple-Attribute Decision-Making
+- id: '7'
+  name: Identifying and Characterizing Intangible Assets
+- id: '8'
+  name: Estimation
+- id: '9'
+  name: Practical Considerations
+  aliases:
+  - Practical Activities
+- id: '10'
+  name: Related Concepts

@@ -1,0 +1,31 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 6: Software Engineering Operations
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-06
+ka_name: Software Engineering Operations
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Engineering Operations Fundamentals
+  aliases:
+  - Operations Fundamentals
+- id: '2'
+  name: Software Engineering Operations Planning
+  aliases:
+  - Operations Planning
+- id: '3'
+  name: Software Engineering Operations Delivery
+  aliases:
+  - Operations Delivery
+- id: '4'
+  name: Software Engineering Operations Control
+  aliases:
+  - Operations Control
+- id: '5'
+  name: Practical Considerations
+  aliases:
+  - Practical Activities
+- id: '6'
+  name: Software Engineering Operations Tools
+  aliases:
+  - Operations Tools

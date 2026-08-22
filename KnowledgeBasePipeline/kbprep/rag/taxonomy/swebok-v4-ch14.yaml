@@ -1,0 +1,13 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 14: Software Engineering Professional Practice
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-14
+ka_name: Software Engineering Professional Practice
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Professionalism
+- id: '2'
+  name: Group Dynamics and Psychology
+- id: '3'
+  name: Communication Skills

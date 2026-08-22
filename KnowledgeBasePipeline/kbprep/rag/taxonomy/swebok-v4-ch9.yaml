@@ -1,0 +1,31 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 9: Software Engineering Management
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-09
+ka_name: Software Engineering Management
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Initiation and Scope Definition
+- id: '2'
+  name: Software Project Planning
+  aliases:
+  - Project Planning
+- id: '3'
+  name: Software Project Execution
+  aliases:
+  - Project Execution
+- id: '4'
+  name: Software Review and Evaluation
+  aliases:
+  - Review and Evaluation
+- id: '5'
+  name: Closure
+- id: '6'
+  name: Software Engineering Measurement
+  aliases:
+  - Engineering Measurement
+- id: '7'
+  name: Software Engineering Management Tools
+  aliases:
+  - Management Tools

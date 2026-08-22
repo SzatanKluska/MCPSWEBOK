@@ -1,0 +1,17 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 10: Software Engineering Process
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-10
+ka_name: Software Engineering Process
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Engineering Process Fundamentals
+  aliases:
+  - Process Fundamentals
+- id: '2'
+  name: Life Cycles
+- id: '3'
+  name: Software Process Assessment and Improvement
+  aliases:
+  - Process Assessment and Improvement

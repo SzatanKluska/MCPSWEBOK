@@ -22,24 +22,41 @@ def build_extractor(cfg: Config) -> DocumentExtractor:
     raise ValueError(f"Unknown extractor provider: {ex['provider']}")
 
 
-def build_cleaner(cfg: Config) -> TextCleaner:
+def _taxonomy_path(cfg: Config, source_id: str) -> str:
+    import os
+
+    path = os.path.join(cfg.path("paths", "taxonomy_dir"), f"{source_id}.yaml")
+    if not os.path.exists(path):
+        raise FileNotFoundError(
+            f"No taxonomy for source '{source_id}': expected {path}. "
+            "Every source needs a {source_id}.yaml here — for a SWEBOK KA, list "
+            "its topics; for external reference material with no comparable "
+            "topic structure, a minimal file with just ka_id/ka_name and an "
+            "empty topics list is enough (chunks then get source-level "
+            "attribution with topic_name left unmapped)."
+        )
+    return path
+
+
+def build_cleaner(cfg: Config, extra_drop_patterns: list[str] | None = None) -> TextCleaner:
     cl = cfg["cleaner"]
     if cl["provider"] == "basic":
         from .adapters.cleaner_basic import BasicCleaner
-        return BasicCleaner(drop_patterns=cl.get("drop_patterns"))
+        patterns = [*cl.get("drop_patterns", []), *(extra_drop_patterns or [])]
+        return BasicCleaner(drop_patterns=patterns)
     raise ValueError(f"Unknown cleaner provider: {cl['provider']}")
 
 
-def build_taxonomy_mapper(cfg: Config) -> TaxonomyMapper:
+def build_taxonomy_mapper(cfg: Config, source_id: str) -> TaxonomyMapper:
     from .adapters.taxonomy_swebok import SwebokTaxonomyMapper
-    return SwebokTaxonomyMapper(cfg.path("paths", "taxonomy"))
+    return SwebokTaxonomyMapper(_taxonomy_path(cfg, source_id))
 
 
-def build_chunker(cfg: Config) -> Chunker:
+def build_chunker(cfg: Config, source_id: str) -> Chunker:
     ch = cfg["chunker"]
     if ch["provider"] == "structure":
         from .adapters.chunker_structure import StructureChunker
-        with open(cfg.path("paths", "taxonomy"), encoding="utf-8") as fh:
+        with open(_taxonomy_path(cfg, source_id), encoding="utf-8") as fh:
             tax = yaml.safe_load(fh)
         return StructureChunker(
             ka_id=tax["ka_id"],

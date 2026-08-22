@@ -1,0 +1,33 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 17: Mathematical Foundations
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-17
+ka_name: Mathematical Foundations
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Basic Logic
+- id: '2'
+  name: Proof Techniques
+- id: '3'
+  name: Set, Relation, Function
+- id: '4'
+  name: Graph and Tree
+- id: '5'
+  name: Finite-State Machine
+- id: '6'
+  name: Grammar
+- id: '7'
+  name: Number Theory
+- id: '8'
+  name: Basics of Counting
+- id: '9'
+  name: Discrete Probability
+- id: '10'
+  name: Numerical Precision, Accuracy, and Error
+- id: '11'
+  name: Algebraic Structures
+- id: '12'
+  name: Engineering Calculus
+- id: '13'
+  name: New Advancements

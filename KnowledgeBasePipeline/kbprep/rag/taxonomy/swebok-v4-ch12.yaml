@@ -1,0 +1,24 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 12: Software Quality
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-12
+ka_name: Software Quality
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Quality Fundamentals
+  aliases:
+  - Quality Fundamentals
+- id: '2'
+  name: Software Quality Management Process
+  aliases:
+  - Quality Management Process
+- id: '3'
+  name: Software Quality Assurance Process
+  aliases:
+  - Quality Assurance Process
+  - QA Process
+- id: '4'
+  name: Software Quality Tools
+  aliases:
+  - Quality Tools

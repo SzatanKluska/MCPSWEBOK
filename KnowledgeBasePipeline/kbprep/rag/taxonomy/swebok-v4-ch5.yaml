@@ -1,0 +1,31 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 5: Software Testing
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-05
+ka_name: Software Testing
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Testing Fundamentals
+  aliases:
+  - Testing Fundamentals
+- id: '2'
+  name: Test Levels
+- id: '3'
+  name: Test Techniques
+- id: '4'
+  name: Test-Related Measures
+- id: '5'
+  name: Test Process
+- id: '6'
+  name: Software Testing in the Development Processes and the Application Domains
+  aliases:
+  - Testing in Development and Application Domains
+- id: '7'
+  name: Testing of and Testing Through Emerging Technologies
+  aliases:
+  - Testing Emerging Technologies
+- id: '8'
+  name: Software Testing Tools
+  aliases:
+  - Testing Tools

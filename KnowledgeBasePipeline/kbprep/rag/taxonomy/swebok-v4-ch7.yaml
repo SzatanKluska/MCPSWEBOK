@@ -1,0 +1,27 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 7: Software Maintenance
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-07
+ka_name: Software Maintenance
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Maintenance Fundamentals
+  aliases:
+  - Maintenance Fundamentals
+- id: '2'
+  name: Key Issues in Software Maintenance
+  aliases:
+  - Maintenance Issues
+- id: '3'
+  name: Software Maintenance Processes
+  aliases:
+  - Maintenance Processes
+- id: '4'
+  name: Software Maintenance Techniques
+  aliases:
+  - Maintenance Techniques
+- id: '5'
+  name: Software Maintenance Tools
+  aliases:
+  - Maintenance Tools

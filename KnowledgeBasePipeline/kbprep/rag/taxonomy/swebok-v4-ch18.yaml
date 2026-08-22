@@ -1,0 +1,29 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 18: Engineering Foundations
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-18
+ka_name: Engineering Foundations
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: The Engineering Process
+- id: '2'
+  name: Engineering Design
+- id: '3'
+  name: Abstraction and Encapsulation
+- id: '4'
+  name: Empirical Methods and Experimental Techniques
+  aliases:
+  - Empirical Methods
+- id: '5'
+  name: Statistical Analysis
+- id: '6'
+  name: Modeling, Simulation, and Prototyping
+- id: '7'
+  name: Measurement
+- id: '8'
+  name: Standards
+- id: '9'
+  name: Root Cause Analysis
+- id: '10'
+  name: Industry 4.0 and Software Engineering

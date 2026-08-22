@@ -68,16 +68,29 @@ class StructureChunker:
         current: list[str] = []
         count = 0
         for sent in sentences:
-            st = _tokens(sent)
-            if count + st > self.max_tokens and current:
-                chunks.append(" ".join(current))
-                current = self._overlap(current)
-                count = _tokens(" ".join(current))
-            current.append(sent)
-            count += st
+            # A "sentence" with no internal .!? break (e.g. a long bulleted
+            # enumeration, common in reference/standards lists) can alone
+            # exceed max_tokens; word-slice it so no chunk is unboundedly big.
+            for piece in self._word_slices(sent):
+                st = _tokens(piece)
+                if count + st > self.max_tokens and current:
+                    chunks.append(" ".join(current))
+                    current = self._overlap(current)
+                    count = _tokens(" ".join(current))
+                current.append(piece)
+                count += st
         if current:
             chunks.append(" ".join(current))
         return chunks
+
+    def _word_slices(self, sentence: str) -> list[str]:
+        words = sentence.split()
+        if len(words) <= self.max_tokens:
+            return [sentence]
+        return [
+            " ".join(words[i:i + self.max_tokens])
+            for i in range(0, len(words), self.max_tokens)
+        ]
 
     def _overlap(self, sentences: list[str]) -> list[str]:
         """Keep trailing sentences up to overlap_tokens for context continuity."""

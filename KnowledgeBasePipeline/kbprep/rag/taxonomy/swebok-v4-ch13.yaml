@@ -1,0 +1,27 @@
+# SWEBOK v4.0 taxonomy — Knowledge Area 13: Software Security
+# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.
+# Top-level topics follow the KA breakdown of topics (from the Guide's Table of Contents).
+ka_id: SWEBOK-KA-13
+ka_name: Software Security
+source_version: SWEBOK Guide V4.0
+topics:
+- id: '1'
+  name: Software Security Fundamentals
+  aliases:
+  - Security Fundamentals
+- id: '2'
+  name: Security Management and Organization
+- id: '3'
+  name: Software Security Engineering and Processes
+  aliases:
+  - Security Engineering and Processes
+- id: '4'
+  name: Security Engineering for Software Systems
+- id: '5'
+  name: Software Security Tools
+  aliases:
+  - Security Tools
+- id: '6'
+  name: Domain-Specific Software Security
+  aliases:
+  - Domain-Specific Security
