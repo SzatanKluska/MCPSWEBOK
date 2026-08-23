@@ -1,5 +1,5 @@
 <!-- system-class-diagram
-updated: 2026-08-22T21:54:59.296Z
+updated: 2026-08-23T10:30:31.220Z
 -->
 # System Class Diagram
 
@@ -472,8 +472,8 @@ classDiagram
 ### interface_mcp
 
 **Responsibility**: everything a connecting MCP client can see and call — the
-`swebok_search` tool, the two prompts, figure resources, completions, and
-sampling — plus the factory that assembles them all onto one `McpServer`.
+`swebok_search` tool, the two prompts, figure resources, and completions —
+plus the factory that assembles them all onto one `McpServer`.
 **Concepts**:
 - **tool / prompt / resource** — the three kinds of capability the Model
   Context Protocol lets a server expose: a callable function (tool), a
@@ -509,10 +509,6 @@ classDiagram
     <<module>>
     +registerCompletions(server)
   }
-  class Sampling {
-    <<module>>
-    +requestSampling(server, params)
-  }
 
   class Retriever { <<type>> +initialize() +search() +figuresFor() +figureImage() +allFigures() +chunkCount }
 
@@ -528,7 +524,6 @@ classDiagram
   FigureResources --> Retriever
 
   note for Retriever "owned by application —<br/>shown only to anchor these calls"
-  note for Sampling "standalone helper; not<br/>registered/wired here — called<br/>ad hoc from tool/prompt handlers"
 ```
 
 ### di
@@ -638,6 +633,7 @@ classDiagram
 | 2026-08-22 | fc284e4 (stub methods) | Reference stubs now show method **names only** (no params/return types, e.g. `+search()`) instead of being fully empty — enough to see at a glance what the referenced port/class offers. Data-type stubs with genuinely no members in their own module's diagram (`Chunk`, `TransformersEmbedder`, `ChunkFileSource`, `FigureFileSource`, ...) stay bare. Updated the skill's convention to match. |
 | 2026-08-22 | fc284e4 (note wrapping) | Kept `note for` (not the display-label variant tried briefly in between) for marking a reference stub's real owner. The actual truncation problem was that Mermaid does not auto-wrap long note text — fixed by hard-wrapping every note in this file with `<br/>` every ~6-8 words. This wrapping rule now applies to every note the skill writes, not just stub-ownership ones. |
 | 2026-08-22 | fc284e4 (restructure) | Reworked into three zoom levels per the `system-class-diagram` skill's new format: Context (unchanged) -> per-subsystem **Module Contract** diagram (one box per module, contract-only members) -> one **class diagram per module** (cross-module "uses" edges dropped in favor of the Module Contract diagram; cross-module "implements" edges and the `di`/`app` wiring exceptions kept via reference stubs). Also split KnowledgeBasePipeline's `Factory` out of `shared` into its own `di` module, mirroring the Server side, so `shared`/`config` hold only real value-bearing contracts. No underlying code changed in this pass — same commit as the previous entry. |
+| 2026-08-23 | 2026-08-22T21:54:59.296Z..2026-08-23T10:30:31.220Z | Removed the `Sampling` node and its note from the `interface_mcp` class diagram — `sampling/sampling.ts` was deleted (unused stub, MCP Sampling is now deprecated per SEP-2577); updated the module's Responsibility line accordingly. No Module Contract or Context change (Sampling was never wired/listed there). |
 | 2026-08-22 | e4d121e..fc284e4 | `Factory.build_chunker` now takes `source_id` (per-source taxonomy resolution, part of the KnowledgeBasePipeline multi-chapter/multi-source extension). `Cli` and `StructureChunker` also changed (new per-source pipeline assembly, per-source cleaner header pattern, oversized-run word-slicing) but only via private (`_`-prefixed) helpers, which the diagram omits by convention — no other node/edge changes. |
 | 2026-08-18 | b17f905..e4d121e | Add `SwebokSkillMakerPrompt` module node (`prompts/swebokSkillMaker.ts`, `registerSwebokSkillMakerPrompt(server)`) and its `ServerFactory ..> SwebokSkillMakerPrompt` edge, alongside the existing `SwebokExplainPrompt`. |
 | 2026-08-13 | fd9f1a6..b17f905 | Re-anchor. `ChunkFileSource`/`FigureFileSource` (previously git-ignored, now tracked) were already represented; other changes were skill/tooling/docs only — no diagram body change. |

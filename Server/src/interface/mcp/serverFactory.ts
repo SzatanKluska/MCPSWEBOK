@@ -23,8 +23,6 @@ import { registerCompletions } from "./completions/completions.js";
  *  - prompts/swebokExplain.ts   — registerPrompts()      (client uses server templates)
  *  - prompts/swebokSkillMaker.ts — registerSwebokSkillMakerPrompt() (ditto)
  *  - completions/completions.ts — registerCompletions()  (argument autocompletion)
- *  - sampling/sampling.ts       — requestSampling()      (server asks client for LLM
- *                                 inference; NOT registered here — call from handlers)
  */
 @injectable()
 export class ServerFactory {
