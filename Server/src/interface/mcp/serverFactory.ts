@@ -6,8 +6,7 @@ import { TYPES } from "../../di/types.js";
 import { Retriever } from "../../application/retriever.js";
 import type { ServerTool } from "./tools/serverTool.js";
 import { registerResources } from "./resources/figures.js";
-import { registerPrompts } from "./prompts/swebokExplain.js";
-import { registerSwebokSkillMakerPrompt } from "./prompts/swebokSkillMaker.js";
+import { registerPrompts } from "./prompts/index.js";
 import { registerCompletions } from "./completions/completions.js";
 
 /**
@@ -20,8 +19,8 @@ import { registerCompletions } from "./completions/completions.js";
  * Extension points:
  *  - tools (ServerTool[])       — client calls server; each tool.register(server)
  *  - resources/figures.ts       — registerResources()   (client reads server data)
- *  - prompts/swebokExplain.ts   — registerPrompts()      (client uses server templates)
- *  - prompts/swebokSkillMaker.ts — registerSwebokSkillMakerPrompt() (ditto)
+ *  - prompts/index.ts           — registerPrompts()      (client uses server templates;
+ *                                 add a prompt by registering it there, not here)
  *  - completions/completions.ts — registerCompletions()  (argument autocompletion)
  */
 @injectable()
@@ -43,7 +42,6 @@ export class ServerFactory {
     }
     registerResources(server, this.retriever);
     registerPrompts(server);
-    registerSwebokSkillMakerPrompt(server);
     registerCompletions(server);
 
     return server;

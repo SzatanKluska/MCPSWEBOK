@@ -21,12 +21,12 @@ function instruction(topic: string): string {
 }
 
 /**
- * Registers reusable prompt templates. `swebok-explain` turns a free-text
- * question into a step-by-step, human explanation grounded in `swebok_search`
- * (definition -> explanation -> example -> depth), preferring Mermaid/markdown
- * for figures and declining anything SWEBOK does not cover.
+ * Registers the `swebok-explain` prompt. Turns a free-text question into a
+ * step-by-step, human explanation grounded in `swebok_search` (definition ->
+ * explanation -> example -> depth), preferring Mermaid/markdown for figures
+ * and declining anything SWEBOK does not cover.
  */
-export function registerPrompts(server: McpServer): void {
+export function registerSwebokExplainPrompt(server: McpServer): void {
   server.registerPrompt(
     "swebok-explain",
     {

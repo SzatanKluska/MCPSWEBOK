@@ -1,5 +1,5 @@
 <!-- system-class-diagram
-updated: 2026-08-23T10:30:31.220Z
+updated: 2026-08-23T10:40:32.791Z
 -->
 # System Class Diagram
 
@@ -497,9 +497,13 @@ classDiagram
     +registerResources(server, retriever)
     +figureUri(id) str
   }
-  class SwebokExplainPrompt {
+  class Prompts {
     <<module>>
     +registerPrompts(server)
+  }
+  class SwebokExplainPrompt {
+    <<module>>
+    +registerSwebokExplainPrompt(server)
   }
   class SwebokSkillMakerPrompt {
     <<module>>
@@ -518,9 +522,10 @@ classDiagram
   ServerFactory --> Retriever
   ServerFactory --> ServerTool
   ServerFactory ..> FigureResources
-  ServerFactory ..> SwebokExplainPrompt
-  ServerFactory ..> SwebokSkillMakerPrompt
+  ServerFactory ..> Prompts
   ServerFactory ..> Completions
+  Prompts --> SwebokExplainPrompt
+  Prompts --> SwebokSkillMakerPrompt
   FigureResources --> Retriever
 
   note for Retriever "owned by application —<br/>shown only to anchor these calls"
@@ -633,6 +638,7 @@ classDiagram
 | 2026-08-22 | fc284e4 (stub methods) | Reference stubs now show method **names only** (no params/return types, e.g. `+search()`) instead of being fully empty — enough to see at a glance what the referenced port/class offers. Data-type stubs with genuinely no members in their own module's diagram (`Chunk`, `TransformersEmbedder`, `ChunkFileSource`, `FigureFileSource`, ...) stay bare. Updated the skill's convention to match. |
 | 2026-08-22 | fc284e4 (note wrapping) | Kept `note for` (not the display-label variant tried briefly in between) for marking a reference stub's real owner. The actual truncation problem was that Mermaid does not auto-wrap long note text — fixed by hard-wrapping every note in this file with `<br/>` every ~6-8 words. This wrapping rule now applies to every note the skill writes, not just stub-ownership ones. |
 | 2026-08-22 | fc284e4 (restructure) | Reworked into three zoom levels per the `system-class-diagram` skill's new format: Context (unchanged) -> per-subsystem **Module Contract** diagram (one box per module, contract-only members) -> one **class diagram per module** (cross-module "uses" edges dropped in favor of the Module Contract diagram; cross-module "implements" edges and the `di`/`app` wiring exceptions kept via reference stubs). Also split KnowledgeBasePipeline's `Factory` out of `shared` into its own `di` module, mirroring the Server side, so `shared`/`config` hold only real value-bearing contracts. No underlying code changed in this pass — same commit as the previous entry. |
+| 2026-08-23 | 2026-08-23T10:30:31.220Z..2026-08-23T10:40:32.791Z | `interface_mcp`: added a `Prompts` module node (`prompts/index.ts`, `registerPrompts(server)`) that aggregates the individual prompt registrars — `SwebokExplainPrompt`'s method renamed `registerPrompts` -> `registerSwebokExplainPrompt` to match. `ServerFactory` now depends only on `Prompts`, which depends on `SwebokExplainPrompt`/`SwebokSkillMakerPrompt` (previously `ServerFactory` called both directly). No Module Contract change — `ServerFactory.create()` is still the only exposed contract. |
 | 2026-08-23 | 2026-08-22T21:54:59.296Z..2026-08-23T10:30:31.220Z | Removed the `Sampling` node and its note from the `interface_mcp` class diagram — `sampling/sampling.ts` was deleted (unused stub, MCP Sampling is now deprecated per SEP-2577); updated the module's Responsibility line accordingly. No Module Contract or Context change (Sampling was never wired/listed there). |
 | 2026-08-22 | e4d121e..fc284e4 | `Factory.build_chunker` now takes `source_id` (per-source taxonomy resolution, part of the KnowledgeBasePipeline multi-chapter/multi-source extension). `Cli` and `StructureChunker` also changed (new per-source pipeline assembly, per-source cleaner header pattern, oversized-run word-slicing) but only via private (`_`-prefixed) helpers, which the diagram omits by convention — no other node/edge changes. |
 | 2026-08-18 | b17f905..e4d121e | Add `SwebokSkillMakerPrompt` module node (`prompts/swebokSkillMaker.ts`, `registerSwebokSkillMakerPrompt(server)`) and its `ServerFactory ..> SwebokSkillMakerPrompt` edge, alongside the existing `SwebokExplainPrompt`. |
