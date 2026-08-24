@@ -47,11 +47,13 @@ A Markdown file (default `docs/architecture/system-class-diagram.md`) containing
    exposed contract; relationships between boxes show the Dependency Rule.
    Exactly one box carries an `ENTRY POINT` line naming how the subsystem is
    actually started, so the reader knows where to begin.
-4. Per module/layer: a short **Responsibility** description and, where the
-   module introduces domain terms a reader wouldn't already know, a
-   **Concepts** glossary — then its own dedicated `classDiagram` with the
-   real classes/interfaces/types it contains (see
-   [Conventions](#module-description-rules)).
+4. Per module/layer: a short **Responsibility** description, a **Contract**
+   block spelling out every exposed element in words (signature, what it
+   does, who uses it and why — the longest of the three parts by design),
+   and, where the module introduces domain terms a reader wouldn't already
+   know, a **Concepts** glossary — then its own dedicated `classDiagram` with
+   the real classes/interfaces/types it contains, its contract green-marked
+   (see [Conventions](#module-description-rules)).
 5. A **Changelog** table recording each generation/update — including which
    of the diagrams above it touched.
 6. A **Reading these diagrams** section, last in the file: one rendered legend
@@ -160,14 +162,13 @@ never loops, and it never has to be committed to "count." Then:
 - **The three parts are separate paragraphs**: a blank line before every
   `**Responsibility**`, `**Contract**` and `**Concepts**`, in every module
   section.
-- **Contract agrees with the diagrams**: each module section has a **Contract**
-  block with one bullet per entry in its Module Contract box — no entry missing,
-  none invented — every bullet names a caller and a reason rather than just
-  restating the signature, and every one of those names is green-bordered or
-  🟢-marked in that module's own class diagram.
-- **Contract lines agree with the boxes**: for each module, the entries in its
-  Module Contract box, the names in its `**Contract**:` line, and the green
-  marks in its class diagram are the same set — read all three together.
+- **Contract agrees across all three places**: for each module, read the
+  Module Contract box, the module section's **Contract** block, and the green
+  marks in its own class diagram together — they must name the same set, no
+  entry missing from any of the three and nothing invented in any of them.
+  The **Contract** block itself has one bullet per entry (never fewer), and
+  each bullet names a caller and a reason rather than just restating the
+  signature.
 - **Names match the code**: spot-check each module's members against the actual
   declarations (`grep -n "^def \|^class \|^export" <file>`). Any member you
   cannot find verbatim in the source is a bug in the diagram.
@@ -204,9 +205,9 @@ never loops, and it never has to be committed to "count." Then:
   (`kbprep/cli.py`, `Server/src/index.ts`), standalone tools
   (`kbprep/figures/extract.py`), and DI token modules (`di/types.ts`). NEVER
   collapse several files into one node — keep the MCP `resources`, `prompts`
-  (swebokExplain, swebokSkillMaker), `completions`, and `sampling` registrars
-  as separate nodes. Exclude only package markers (`__init__.py`), data
-  (`*.yaml`, `*.jsonl`, images), tests, and build output; note any other
+  (the `index.ts` aggregator plus `swebokExplain`/`swebokSkillMaker`), and
+  `completions` registrars as separate nodes. Exclude only package markers
+  (`__init__.py`), data (`*.yaml`, `*.jsonl`, images), tests, and build output; note any other
   deliberate omission.
 - **Member granularity**: within a node, show key public methods/attributes that
   define collaborations; omit private helpers, getters, and trivial DTO fields.
@@ -293,23 +294,9 @@ never loops, and it never has to be committed to "count." Then:
   - A module that exposes nothing (`adapters`) still gets a Contract block: one
     bullet saying so and explaining why — that its every method is already a
     port method — not an empty heading.
-  - In the per-module class diagram, put a green border on every node the
-    Module Contract box names —
-    `style <Node> stroke:#16A34A,stroke-width:4px` — and prefix every member it
-    names with a green dot, written directly after the visibility character:
-    `+🟢 search(query, k) List~Hit~`. Reference stubs borrowed from other
-    modules never get the marking; they are that module's contract, not this
-    one's.
-  - Mermaid can style whole nodes only, never individual members, so the
-    member-level marker has to be a glyph. Do not try to solve this with
-    `classDef` or inline HTML — neither reaches a member line.
-- **Derive the contract from real usage, not from what looks tidy.** Before
-  writing a box or a Contract line, list what other modules actually import from
-  this one (`grep -rn "from .*<module>/" --include=... .`, or the Python
-  equivalent) and reconcile against it. Two failure modes to check for
-  explicitly: a box that lists *fewer* members than are really called across the
-  boundary (the common one — it makes the module look smaller than it is), and a
-  box that lists a concrete adapter class, which belongs one level down.
+  - The per-module class diagram marks every one of these elements in green —
+    see [Per-module class diagram rules](#per-module-class-diagram-rules) for
+    exactly how.
 ### Module Contract diagram rules
 - One `classDiagram` per subsystem, one class-box per module (stereotype
   `<<layer>>`).
@@ -324,15 +311,17 @@ never loops, and it never has to be committed to "count." Then:
     module imports something from it, that something is its contract and the
     reader needs to see it.
   - Small side-feature (e.g. `figures`) → 1-2 key public functions.
-- **Derive each box from real cross-module usage, not from intuition.** Before
-  writing a box, list what other modules actually import from this one:
+- **Derive each box — and its module section's Contract block — from real
+  cross-module usage, not from intuition.** Before writing either, list what
+  other modules actually import from this one:
   `grep -rn "from \"[^\"]*<module>/" --include="*.ts" src | grep -v "^src/<module>/"`
   for TypeScript, `grep -rn "import.*<module>" --include="*.py"` for Python, then
   for a class, grep the call sites of its instances. Anything another module
-  imports or calls belongs in the box; anything nothing else touches does not.
-  Guessing here produces the two failure modes that keep recurring: a box that
-  lists two of a class's six externally-used methods, and a box left blank for a
-  module that other code imports from every day.
+  imports or calls belongs in the box (and the Contract block); anything
+  nothing else touches does not. Guessing here produces the two failure modes
+  that keep recurring: a box that lists two of a class's six externally-used
+  methods, and a box left blank for a module that other code imports from
+  every day.
 - **An empty box is a claim, not a default.** A box with no members asserts
   "this module exposes nothing of its own" — which is occasionally true (a pure
   adapters layer whose every method is already a port method) but usually means
@@ -491,29 +480,39 @@ classDiagram
 ```
 
 ### moduleX
+
 **Responsibility**: defines the contracts moduleY and moduleZ are built against.
+
 **Concepts**:
 - **Result** — the outcome type every port operation returns.
+
 ```mermaid
 classDiagram
   class PortOne { <<interface>> +op(arg) Result }
   class PortTwo { <<interface>> +op(arg) Result }
 ```
+
 ### moduleY
+
 **Responsibility**: the one use case, expressed as a single facade over moduleX's ports.
+
 **Contract** — what other modules may call:
 - `Facade.mainOp(arg) → Result` — runs the use case end to end over moduleX's
   ports. Used by `app` to serve one request; it is the only way in, which is why
   moduleY needs no other public surface.
 
 `Facade.reset()` is public but **not** contract — only moduleY's own tests call it.
+
 ```mermaid
 classDiagram
   class Facade { +🟢 mainOp(arg) Result }
   style Facade stroke:#16A34A,stroke-width:4px
 ```
+
 ### moduleZ
+
 **Responsibility**: the concrete implementation of moduleX's ports.
+
 ```mermaid
 classDiagram
   class ConcreteImpl
