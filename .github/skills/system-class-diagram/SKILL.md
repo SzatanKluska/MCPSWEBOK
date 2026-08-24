@@ -45,6 +45,8 @@ A Markdown file (default `docs/architecture/system-class-diagram.md`) containing
 3. Per subsystem, a **Module Contract** `classDiagram` — one box per
    module/layer (the same groups used in step 4), each listing only its
    exposed contract; relationships between boxes show the Dependency Rule.
+   Exactly one box carries an `ENTRY POINT` line naming how the subsystem is
+   actually started, so the reader knows where to begin.
 4. Per module/layer: a short **Responsibility** description and, where the
    module introduces domain terms a reader wouldn't already know, a
    **Concepts** glossary — then its own dedicated `classDiagram` with the
@@ -52,6 +54,8 @@ A Markdown file (default `docs/architecture/system-class-diagram.md`) containing
    [Conventions](#module-description-rules)).
 5. A **Changelog** table recording each generation/update — including which
    of the diagrams above it touched.
+6. A **Reading these diagrams** section, last in the file: one rendered legend
+   showing what each arrow style and the red-bordered entry-point box mean.
 
 ## Procedure
 
@@ -147,6 +151,32 @@ never loops, and it never has to be committed to "count." Then:
   omission.
 - Every module referenced as a box in a Module Contract diagram has a
   corresponding `###` class-diagram section below it, and vice versa.
+- Every Module Contract diagram has exactly one `ENTRY POINT` member line, and
+  the command it names still matches how the subsystem is actually started.
+- The `## Reading these diagrams` section exists as the last section of the
+  file, and no diagram anywhere has its own `**Legend:**` line.
+- **No silently empty box**: every Module Contract box either lists members or
+  states in a member line that it exposes nothing of its own.
+- **The three parts are separate paragraphs**: a blank line before every
+  `**Responsibility**`, `**Contract**` and `**Concepts**`, in every module
+  section.
+- **Contract agrees with the diagrams**: each module section has a **Contract**
+  block with one bullet per entry in its Module Contract box — no entry missing,
+  none invented — every bullet names a caller and a reason rather than just
+  restating the signature, and every one of those names is green-bordered or
+  🟢-marked in that module's own class diagram.
+- **Contract lines agree with the boxes**: for each module, the entries in its
+  Module Contract box, the names in its `**Contract**:` line, and the green
+  marks in its class diagram are the same set — read all three together.
+- **Names match the code**: spot-check each module's members against the actual
+  declarations (`grep -n "^def \|^class \|^export" <file>`). Any member you
+  cannot find verbatim in the source is a bug in the diagram.
+- **Section order starts at the entry point** in every subsystem, and the prose
+  above the Module Contract diagram states that order.
+- **Entry-point imports are all drawn**: read the entry-point file's imports
+  (`cli.py`, `index.ts`) and confirm each module it pulls from has a matching
+  edge from `app` in the Module Contract diagram. A missing edge here is the
+  easiest defect to introduce and the hardest to notice.
 - Every module section has a Responsibility line.
 - Re-run the helper; it must now print `MODE: up-to-date`.
 - Sanity-check each Mermaid block renders (balanced fences, valid
@@ -181,6 +211,26 @@ never loops, and it never has to be committed to "count." Then:
 - **Member granularity**: within a node, show key public methods/attributes that
   define collaborations; omit private helpers, getters, and trivial DTO fields.
   This trims *members*, never whole files (see Completeness).
+- **Member names are copied from the code, never paraphrased.** A node's members
+  must use the exact identifier as declared — `cmd_prepare()`, not `prepare()`;
+  `figures_dir`, not `dir`; `load_config(path)`, not `loadConfig`. The same goes
+  for arity: if `prepare` takes five parameters, show five. A prettified name is
+  worse than no name, because the reader cannot grep for it and has no way to
+  tell the diagram is lying. Before writing any member, open the declaration and
+  copy it.
+  - Corollary: do not invent a class that does not exist to hold the members. A
+    file of module-level functions (`cli.py`, `sidecar.py`, `container.ts`) is a
+    `<<module>>` node whose members are those functions; it does not become a
+    `Cli` class just because a class shape would look tidier. Node *names* for
+    such files may be file-derived labels (`FiguresSidecar` for `sidecar.py`) —
+    that is a label for a file, which is fine; members must never be invented.
+- **Order the module sections entry-point first, following the flow.** After the
+  Module Contract diagram, the `###` sections go in the order a reader would
+  trace execution: the `ENTRY POINT` module, then what it reaches first, then
+  what those reach — not alphabetically and not in dependency-layer order
+  (`ports` first, `app` last) which forces the reader to start at the leaves.
+  State the chosen order in the prose above the Module Contract diagram so it is
+  visibly a decision rather than an accident.
 - **Relationships**: `A ..|> B` implements a port/interface; `A --> B` uses/depends;
   `A *-- B` composes; `A o-- B` aggregates.
 - **Polyglot**: Python and TypeScript go in the same file but every diagram
@@ -194,7 +244,72 @@ never loops, and it never has to be committed to "count." Then:
   calculated bounds and gets visually clipped by the surrounding container —
   it then reads as an unrelated, half-cut box rather than an annotation.
   Manual wrapping is mandatory, not optional, for any note this skill writes.
+- **One legend for the whole file — never per-diagram.** The arrow vocabulary is
+  identical in every diagram here, so it is explained exactly once, in a
+  `## Reading these diagrams` section placed as the **last** section of the file
+  (after the Changelog). It holds a small `classDiagram` that *draws* each arrow
+  kind between throwaway nodes (`Caller --> Dependency : solid — uses / depends
+  on`, etc.) plus a red-bordered entry-point box, because a reader looking at a
+  rendered picture cannot see that a line was written `..>`. The intro at the top
+  of the file points to it.
+  - Do **not** add a per-diagram legend line under individual diagrams. It was
+    tried and removed: repeating the same three or four entries under 11
+    diagrams is noise that competes with the diagram itself, and it rots
+    independently of the section that actually defines the vocabulary.
+  - Use this fixed wording in the section, naming the *rendered* appearance
+    first, then the source token, then the meaning:
+    - solid `-->` uses / depends on
+    - dashed `..>` calls or wires (looser use)
+    - dashed + hollow triangle `..|>` implements this port
+    - filled diamond `*--` composes (owns the part)
+    - hollow diamond `o--` aggregates
+    - dark red border = the entry point (execution starts here)
+    - green border / green dot = part of this module's Module Contract
 
+- **Every module section states its Contract in words, and the diagrams mark it
+  in green.** The Module Contract diagram and the per-module class diagram are
+  two views of the same fact — what this module lets other modules call — so
+  they must never disagree. Three linked obligations:
+  - Under each module's `###` heading, a **Contract** block: not a sentence, but
+    a **bullet per element** covering *every* entry in that module's Module
+    Contract box — same names, same order, nothing missing and nothing extra.
+    Each bullet has three parts, in this order:
+    1. the **element**, written exactly as declared in the code (full signature
+       with parameter names, and the return type where there is one);
+    2. **what it does** — one clause, in terms of this module's own job;
+    3. **what it is used for** — the concrete caller and the reason, naming the
+       module or file (`cli.py` calls it once per source during `prepare`;
+       `swebokSearchTool` reads it to pick a default `topK`).
+    Shape: `` - `op(arg) → Result` — does X. Used by Y to Z. ``
+    The point of part 3 is that a reader who has never opened this module should
+    finish the list understanding *why the module is shaped this way* — which is
+    the whole reason the Contract block exists and why a one-line summary is not
+    enough. A bullet that only restates the signature has failed.
+  - Close the block with the deliberate exclusions: any public member that is
+    **not** contract, and why (e.g. `initialize()` is triggered by the container
+    through `@postConstruct`, not called by another module). These lines are
+    often the most informative in the section, because they are where the
+    module's boundary is actually decided.
+  - A module that exposes nothing (`adapters`) still gets a Contract block: one
+    bullet saying so and explaining why — that its every method is already a
+    port method — not an empty heading.
+  - In the per-module class diagram, put a green border on every node the
+    Module Contract box names —
+    `style <Node> stroke:#16A34A,stroke-width:4px` — and prefix every member it
+    names with a green dot, written directly after the visibility character:
+    `+🟢 search(query, k) List~Hit~`. Reference stubs borrowed from other
+    modules never get the marking; they are that module's contract, not this
+    one's.
+  - Mermaid can style whole nodes only, never individual members, so the
+    member-level marker has to be a glyph. Do not try to solve this with
+    `classDef` or inline HTML — neither reaches a member line.
+- **Derive the contract from real usage, not from what looks tidy.** Before
+  writing a box or a Contract line, list what other modules actually import from
+  this one (`grep -rn "from .*<module>/" --include=... .`, or the Python
+  equivalent) and reconcile against it. Two failure modes to check for
+  explicitly: a box that lists *fewer* members than are really called across the
+  boundary (the common one — it makes the module look smaller than it is), and a
+  box that lists a concrete adapter class, which belongs one level down.
 ### Module Contract diagram rules
 - One `classDiagram` per subsystem, one class-box per module (stereotype
   `<<layer>>`).
@@ -203,9 +318,32 @@ never loops, and it never has to be committed to "count." Then:
     port/interface names, one per line.
   - Orchestration/use-case facade (e.g. `application`, `core`) → list its
     main public entry-point signatures (e.g. `Retriever.search(query, k)`).
-  - Pure wiring/composition (e.g. `di`) → no members needed; the box + its
-    edges are enough.
+  - Wiring/composition (e.g. `di`) → list the public builders/entry points other
+    modules actually call (`buildContainer(config)`, `build_embedder(cfg)`, ...).
+    "It's only wiring" is **not** a reason to leave the box blank: if another
+    module imports something from it, that something is its contract and the
+    reader needs to see it.
   - Small side-feature (e.g. `figures`) → 1-2 key public functions.
+- **Derive each box from real cross-module usage, not from intuition.** Before
+  writing a box, list what other modules actually import from this one:
+  `grep -rn "from \"[^\"]*<module>/" --include="*.ts" src | grep -v "^src/<module>/"`
+  for TypeScript, `grep -rn "import.*<module>" --include="*.py"` for Python, then
+  for a class, grep the call sites of its instances. Anything another module
+  imports or calls belongs in the box; anything nothing else touches does not.
+  Guessing here produces the two failure modes that keep recurring: a box that
+  lists two of a class's six externally-used methods, and a box left blank for a
+  module that other code imports from every day.
+- **An empty box is a claim, not a default.** A box with no members asserts
+  "this module exposes nothing of its own" — which is occasionally true (a pure
+  adapters layer whose every method is already a port method) but usually means
+  the diagram is unfinished. A reader cannot tell those two apart from a blank
+  box, so:
+  - Before leaving any box memberless, grep the module for public declarations
+    and check what other modules import from it. Anything imported elsewhere
+    belongs in the box.
+  - If it really does expose nothing, say so **in a member line** — e.g.
+    `no API of its own — every method is a ports method` — rather than leaving
+    the box blank.
 - **NEVER list an internal/private class or a concrete adapter by name here**
   — that belongs only in the per-module class diagram. This discipline is
   what keeps this diagram small and stable as the system grows; if you're
@@ -213,17 +351,54 @@ never loops, and it never has to be committed to "count." Then:
 - Relationships use the same arrow vocabulary as class diagrams, but between
   modules, mirroring the Dependency Rule (e.g. `infrastructure ..|> domain`,
   `application --> domain`, `di ..> infrastructure`).
+- **Mark the entry point — every Module Contract diagram must have exactly
+  one.** A reader opening the diagram needs to know which box to read *first*;
+  without it the boxes look like an unordered set and the arrows read as
+  trivia. Give the module where execution actually starts a first member line
+  `ENTRY POINT — <how the subsystem is really invoked>` (e.g.
+  `ENTRY POINT — python -m kbprep.cli`, `ENTRY POINT — node dist/index.js`),
+  above that box's other members. Rules:
+  - Mark it **both ways, always**: the member line above, *and* a dark-red
+    **border** (never a fill) —
+    `style <module> stroke:#8B1A1A,stroke-width:4px`
+    as the last line of the diagram. Border only: it leaves the box's own
+    background and text colour alone, so the box stays readable in light and
+    dark themes without hard-coding a text colour. The border is what the eye
+    finds first; the member line is what survives a text diff, says how to
+    actually run the thing, and still reads if the style fails to render. Keep
+    this exact stroke so the badge means the same thing in every diagram.
+  - The command must be the one that genuinely starts the subsystem (check the
+    README / `package.json` scripts / `__main__` block — do not invent it).
+  - If a subsystem has more than one candidate, the entry point is where the
+    **process** starts, not where later requests arrive; mention any
+    request-side entry in the prose above the diagram instead of adding a
+    second badge.
+  - A subsystem that is a pure library with no way to start it says so in that
+    prose rather than getting a badge.
 
 ### Module description rules
 - Immediately under each module's `###` heading, before its `classDiagram`,
   write:
   - **Responsibility** — one or two sentences on the module's job, in plain
     language a newcomer to this specific module could follow.
+  - **Contract** — a bullet per exposed element (signature, what it does, who
+    uses it and why), matching that module's box in the Module Contract diagram
+    exactly, then the deliberate exclusions (see the contract rule above).
+    This is the longest of the three parts and is meant to be — it is where a
+    reader learns why the module is shaped the way it is.
   - **Concepts** — a short bullet glossary, only where the module introduces
     or is the natural home of a domain term a reader wouldn't already know
     (`**Term** — one-line definition`, using the project's own vocabulary,
     not invented terminology). Define what the term *means* in this system,
     not which class implements it — that's what the diagram below is for.
+- **Each of the three is its own paragraph — separate them with a blank line.**
+  `**Responsibility**`, `**Contract**` and `**Concepts**` must each be preceded
+  by an empty line (and follow the `###` heading with one). Without it Markdown
+  folds them into a single running paragraph: the bold labels stay bold but the
+  block reads as one wall of text, and the reader loses the very structure the
+  three parts exist to provide. This is the easiest thing to get wrong when
+  editing an existing section, because the labels *look* like headings in the
+  source even when they are not rendering as separate blocks.
 - Omit the Concepts glossary entirely for modules that introduce no new
   vocabulary (pure wiring/composition modules like `di`/`app` usually need
   only the Responsibility line).
@@ -232,6 +407,26 @@ never loops, and it never has to be committed to "count." Then:
   an earlier module isn't redefined; reference it by name instead.
 
 ### Per-module class diagram rules
+- **Mark the contract green in the per-module class diagrams.** A reader looking
+  at a module's detailed diagram must be able to see, without scrolling back up,
+  which of its members are the published contract and which are internal. Use a
+  visible green:
+  - **Node border** — `style <Node> stroke:#16A34A,stroke-width:4px` on every
+    node the module's Module Contract box names. Border, not fill, for the same
+    reason as the red entry-point badge: it leaves the box's own background and
+    text colour alone, so it survives both themes.
+  - **Member marker** — prefix each member the box names with a green dot right
+    after the visibility character: `+🟢 search(query, k) List~Hit~`. Mermaid has
+    **no per-member styling** — `style`/`classDef` apply to whole nodes only — so
+    the marker glyph is the only way to distinguish contract members from
+    internal ones inside the same box. Do not attempt inline HTML or CSS: GitHub
+    renders Mermaid with HTML labels disabled and it will not work.
+  - Where the box names a **type or interface rather than its methods** (a ports
+    layer whose box lists the six protocol names), give the node a green border
+    and leave its members unmarked. The rule is literal: green means "this exact
+    thing appears in the Module Contract box".
+  - A module whose contract is `none` gets no green anywhere — that absence is
+    itself informative and must not be softened.
 - One `classDiagram` per module/layer, containing only classes/interfaces/
   types/functions that module owns (same Completeness/Member granularity
   rules as above).
@@ -285,11 +480,16 @@ flowchart LR
 ```mermaid
 classDiagram
   class moduleX { <<layer>> PortOne, PortTwo }
-  class moduleY { <<layer>> Facade.mainOp(arg) }
+  class moduleY { <<layer>>
+    ENTRY POINT — how-this-subsystem-is-started
+    Facade.mainOp(arg)
+  }
   class moduleZ { <<layer>> }
   moduleY --> moduleX
   moduleZ ..|> moduleX
+  style moduleY stroke:#8B1A1A,stroke-width:4px
 ```
+
 ### moduleX
 **Responsibility**: defines the contracts moduleY and moduleZ are built against.
 **Concepts**:
@@ -301,9 +501,16 @@ classDiagram
 ```
 ### moduleY
 **Responsibility**: the one use case, expressed as a single facade over moduleX's ports.
+**Contract** — what other modules may call:
+- `Facade.mainOp(arg) → Result` — runs the use case end to end over moduleX's
+  ports. Used by `app` to serve one request; it is the only way in, which is why
+  moduleY needs no other public surface.
+
+`Facade.reset()` is public but **not** contract — only moduleY's own tests call it.
 ```mermaid
 classDiagram
-  class Facade { +mainOp(arg) Result }
+  class Facade { +🟢 mainOp(arg) Result }
+  style Facade stroke:#16A34A,stroke-width:4px
 ```
 ### moduleZ
 **Responsibility**: the concrete implementation of moduleX's ports.
@@ -319,6 +526,20 @@ classDiagram
 | Date | Since -> Updated | Summary |
 |------|------------------|---------|
 | <date> | initial | Initial diagram. |
+
+## Reading these diagrams
+```mermaid
+classDiagram
+  direction LR
+  class EntryPointModule { <<layer>>
+    ENTRY POINT — the command that starts it
+  }
+  class Caller
+  class Dependency
+  Caller --> Dependency : solid — uses / depends on
+  style EntryPointModule stroke:#8B1A1A,stroke-width:4px
+```
+- **Dark red border** — the entry point: the one module that starts on its own.
 ````
 
 ## Notes
