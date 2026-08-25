@@ -7,10 +7,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .ports import (
+from ..ports import (
     DocumentExtractor, TextCleaner, TaxonomyMapper, Chunker, Embedder, VectorStore,
 )
-from .models import Document, Section, Chunk
+from ..models import Document, Section, Chunk
 from .quality import QualityReport, extraction_gate, chunk_gate
 
 

@@ -15,9 +15,9 @@ import re
 import sys
 
 from .shared.config import load_config
-from .rag import factory
+from .di import factory
 from .figures.sidecar import load_figures
-from .rag.pipeline import Pipeline
+from .core.pipeline import Pipeline
 
 _CONFIG = os.path.join(os.path.dirname(__file__), "..", "config.yaml")
 

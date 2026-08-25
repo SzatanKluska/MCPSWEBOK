@@ -11,7 +11,8 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from kbprep.rag import ports, factory
+from kbprep import ports
+from kbprep.di import factory
 from kbprep.shared.config import load_config
 
 _CONFIG = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "config.yaml"))

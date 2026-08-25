@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from statistics import mean, median
 
-from .models import Document, Chunk
+from ..models import Document, Chunk
 
 
 @dataclass

@@ -164,7 +164,7 @@ for num, (ka_name, topics) in CHAPTERS.items():
         "source_version": "SWEBOK Guide V4.0",
         "topics": [{"id": str(i + 1), "name": t} for i, t in enumerate(topics)],
     }
-    out_path = f"kbprep/rag/taxonomy/swebok-v4-ch{num}.yaml"
+    out_path = f"data/taxonomy/swebok-v4-ch{num}.yaml"
     with open(out_path, "w", encoding="utf-8") as fh:
         fh.write(f"# SWEBOK v4.0 taxonomy — Knowledge Area {num}: {ka_name}\n")
         fh.write("# Used to tag chunks with (ka, topic) metadata for RAG filtering & citation.\n")

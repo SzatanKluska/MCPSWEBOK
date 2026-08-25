@@ -109,7 +109,7 @@ ALIASES: dict[int, dict[str, list[str]]] = {
 
 def main() -> None:
     for num, topic_aliases in ALIASES.items():
-        path = f"kbprep/rag/taxonomy/swebok-v4-ch{num}.yaml"
+        path = f"data/taxonomy/swebok-v4-ch{num}.yaml"
         with open(path, encoding="utf-8") as fh:
             lines = fh.readlines()
             fh.seek(0)

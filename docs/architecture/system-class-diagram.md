@@ -1,5 +1,5 @@
 <!-- system-class-diagram
-updated: 2026-08-24T16:39:48.848Z
+updated: 2026-08-24T22:07:36.251Z
 -->
 # System Class Diagram
 
@@ -466,10 +466,10 @@ cross-cutting bootstrap.
 Read it starting from the `ENTRY POINT` box: `app` boots the process once
 (load config -> build container -> warm up the retriever -> connect a
 transport). After that the process just waits, and every later request from a
-connected MCP client arrives at `interface_mcp` — so `app` is where execution
-starts, `interface_mcp` is where work arrives. The module sections below follow
+connected MCP client arrives at `interface` — so `app` is where execution
+starts, `interface` is where work arrives. The module sections below follow
 that bootstrap order (`app` -> `config` -> `di` -> `application` -> `domain` ->
-`infrastructure` -> `interface_mcp`) rather than the layering order.
+`infrastructure` -> `interface`) rather than the layering order.
 
 ### Module Contract
 
@@ -494,7 +494,7 @@ classDiagram
   class infrastructure { <<layer>>
     createTransport(config) ServerTransport
   }
-  class interface_mcp { <<layer>>
+  class interface { <<layer>>
     ServerFactory.create() McpServer
     ServerTool
   }
@@ -513,16 +513,16 @@ classDiagram
 
   infrastructure ..|> domain : implement ports
   application --> domain : depends only on
-  interface_mcp --> application
-  interface_mcp ..> domain : citationOf (citations)
+  interface --> application
+  interface ..> domain : citationOf (citations)
   di ..> infrastructure : wires concrete adapters
   di ..> application
-  di ..> interface_mcp
+  di ..> interface
   di --> domain
   app --> di
   app --> config
   app ..> application
-  app ..> interface_mcp
+  app ..> interface
   app ..> infrastructure : createTransport
   style app stroke:#8B1A1A,stroke-width:4px
 ```
@@ -542,7 +542,7 @@ What `main()` does, in order, is the clearest summary of how the Server is wired
 - `loadConfig()` from `config` — read the environment into one typed object.
 - `buildContainer(config)` from `di` — bind every `domain` port to its `infrastructure` adapter.
 - `await container.getAsync(Retriever)` — resolving it asynchronously triggers the `@postConstruct` warm-up, so the knowledge base is loaded and embedded before the first request instead of during it.
-- `ServerFactory.create()` from `interface_mcp` — register the tool, prompts, resources and completions onto one `McpServer`.
+- `ServerFactory.create()` from `interface` — register the tool, prompts, resources and completions onto one `McpServer`.
 - `createTransport(config)` from `infrastructure`, then `server.connect(transport)` — after which the process just waits for JSON-RPC. All logging goes to stderr because stdout is the protocol stream on stdio.
 
 ```mermaid
@@ -562,7 +562,7 @@ classDiagram
   Main ..> Retriever
   Main ..> TransportFactory
 
-  note for Container "owned by di; ServerFactory by<br/>interface_mcp; Retriever by application;<br/>TransportFactory by infrastructure —<br/>shown only to anchor Main's bootstrap sequence"
+  note for Container "owned by di; ServerFactory by<br/>interface; Retriever by application;<br/>TransportFactory by infrastructure —<br/>shown only to anchor Main's bootstrap sequence"
   style Main stroke:#16A34A,stroke-width:4px
 ```
 
@@ -579,7 +579,7 @@ name, top-k default, ...).
 **Contract** — what other modules may call:
 
 - `loadConfig(env) → Config` — reads process environment variables into one validated object, applying defaults. Called once by `app` at startup; nothing else reads `process.env`, so every setting has exactly one place it can come from.
-- `Config` — the resulting typed record (knowledge base path, model name, transport kind, default topK, server name and version). Imported by `application`, `infrastructure`, `interface_mcp` and `di`, which take it by injection rather than reading the environment themselves.
+- `Config` — the resulting typed record (knowledge base path, model name, transport kind, default topK, server name and version). Imported by `application`, `infrastructure`, `interface` and `di`, which take it by injection rather than reading the environment themselves.
 
 `TransportKind` and `HttpConfig` are exported too, but only `config.ts` and the transport adapters use them internally, so they stay out of the contract.
 
@@ -609,7 +609,7 @@ object graph the rest of the app runs on.
 **Contract** — what other modules may call:
 
 - `buildContainer(config) → Container` — the composition root: registers the `Config` value and binds each `domain` port to the concrete `infrastructure` adapter that implements it, plus the `Retriever`, the `ServerFactory` and every `ServerTool`. Called once by `app`; it is the only place in the Server where a concrete adapter class is named.
-- `TYPES` — the token map (`Config`, `ServerTool`, `Embedder`, `ChunkSource`, `FigureStore`, `VectorIndex`). Imported by `application`, `infrastructure` and `interface_mcp` to declare their injection points. Tokens exist because TypeScript interfaces vanish at runtime and cannot themselves be container keys — this map is the workaround, and the reason `di` is depended on by layers that otherwise know nothing about it.
+- `TYPES` — the token map (`Config`, `ServerTool`, `Embedder`, `ChunkSource`, `FigureStore`, `VectorIndex`). Imported by `application`, `infrastructure` and `interface` to declare their injection points. Tokens exist because TypeScript interfaces vanish at runtime and cannot themselves be container keys — this map is the workaround, and the reason `di` is depended on by layers that otherwise know nothing about it.
 
 That inbound dependency is the one deliberate exception to the inward-pointing rule: modules import a *token*, never a concrete binding.
 
@@ -654,7 +654,7 @@ classDiagram
 
   note for Container "Composition root: binds ports<br/>to adapters (DI, not service location)."
   note for Retriever "owned by application —<br/>shown only to anchor what Container wires"
-  note for ServerFactory "owned by interface_mcp<br/>(same for SwebokSearchTool)"
+  note for ServerFactory "owned by interface<br/>(same for SwebokSearchTool)"
   note for TransformersEmbedder "owned by infrastructure<br/>(same for InMemoryVectorIndex/<br/>ChunkFileSource/FigureFileSource)"
   style Container stroke:#16A34A,stroke-width:4px
   style Tokens stroke:#16A34A,stroke-width:4px
@@ -715,7 +715,7 @@ retrieval policies.
 - `ChunkSource.load() → Chunk[]` — where prepared chunks come from. Implemented by `ChunkFileSource` reading `chunks.jsonl`, which is the exact point the pipeline's handoff enters the Server.
 - `FigureStore.load() → Map~string, Figure~` / `readImage(figure) → ImageBytes | null` — figure records and their image bytes. Two methods because metadata is loaded once at startup while images are read lazily, per request.
 - `VectorIndex.build(chunks, vectors)` / `search(query, k) → Hit[]` — the in-memory index. Implemented by `InMemoryVectorIndex`; built during warm-up, searched per request.
-- `Chunk`, `Figure`, `Hit`, `ImageBytes` — the value types every layer passes around. They live here so `application` and `interface_mcp` can talk about the same data without either depending on the other.
+- `Chunk`, `Figure`, `Hit`, `ImageBytes` — the value types every layer passes around. They live here so `application` and `interface` can talk about the same data without either depending on the other.
 - `figuresForRefs(refs, byId) → Figure[]` — pure lookup of figure ids against a map. Used by `Retriever`; a free function rather than a method because it has no state and is trivially testable.
 - `citationOf(chunk) → string` — formats a chunk's metadata into the citation string. Used by `swebokSearchTool` when rendering results, so citation format is decided once, in the domain, rather than in the presentation layer.
 
@@ -826,7 +826,7 @@ classDiagram
   style TransportFactory stroke:#16A34A,stroke-width:4px
 ```
 
-### interface_mcp
+### interface
 
 **Responsibility**: everything a connecting MCP client can see and call — the
 `swebok_search` tool, the two prompts, figure resources, and completions —
@@ -904,6 +904,7 @@ classDiagram
 
 | Date | Since -> Updated | Summary |
 |------|------------------|---------|
+| 2026-08-25 | 2026-08-24T16:39:48.848Z..2026-08-24T22:07:36.251Z | Renamed the Server module `interface_mcp` -> `interface`, decided during a `documentation-align` run: the level-1 folder is `src/interface/` and `mcp/` is one delivery mechanism nested inside it, leaving room for a future sibling. Diagram box, edges, notes, prose and section heading updated; no code moved on the Server side. The KnowledgeBasePipeline restructure done in the same run (its five modules lifted out of `rag/` into their own level-1 packages) changed no module names, so no diagram node changed. |
 | 2026-08-24 | initial @ 2026-08-24T16:39:48.848Z | Regenerated from scratch (the previous file was deleted to test the skill's CREATE path). Covers all 39 source files across both subsystems. Earlier revision history is in git, on `docs/architecture/system-class-diagram.md` up to commit `e72356c`. |
 
 ## Reading these diagrams

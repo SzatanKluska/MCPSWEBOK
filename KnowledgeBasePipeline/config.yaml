@@ -4,8 +4,8 @@
 
 paths:
   raw_materials: ./RawMaterials
-  taxonomy_dir: ./kbprep/rag/taxonomy   # one {source_id}.yaml per source (per KA/book)
-  figures: ./kbprep/figures/sidecars  # authored figure sidecars (input, per source_id)
+  taxonomy_dir: ./data/taxonomy   # one {source_id}.yaml per source (per KA/book)
+  figures: ./data/figures  # authored figure sidecars (input, per source_id)
   output: ./output                    # internal artifacts (QA report)
   knowledge_base: ../KnowledgeBase    # handoff contract consumed by the MCP server
 

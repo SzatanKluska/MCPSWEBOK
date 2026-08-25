@@ -11,13 +11,13 @@ touching the core.
 This project uses the **Ports & Adapters** (or Hexagonal) architecture to keep the
 core logic clean and independent of external technologies.
 
-- **Ports**: These are interfaces defined in `kbprep/rag/ports.py`. They declare
+- **Ports**: These are interfaces defined in `kbprep/ports/ports.py`. They declare
   a contract for a piece of functionality, like `DocumentExtractor` or
   `VectorStore`. The core application (`pipeline.py`) only interacts with these
   ports, without knowing any implementation details.
 
 - **Adapters**: These are the concrete implementations of the ports, located in
-  `kbprep/rag/adapters/`. An adapter "plugs into" a port. For example,
+  `kbprep/adapters/`. An adapter "plugs into" a port. For example,
   `PdfPlumberExtractor` is an adapter that implements the `DocumentExtractor`
   port using the `pdfplumber` library.
 
@@ -32,7 +32,7 @@ core logic clean and independent of external technologies.
 extract → clean → map-taxonomy → chunk → embed → index → retrieve/eval
 ```
 
-Each stage is an adapter behind a port (see `kbprep/rag/ports.py`). Scope is
+Each stage is an adapter behind a port (see `kbprep/ports/ports.py`). Scope is
 all 18 Knowledge Areas of SWEBOK Guide V4.0a, one PDF + one taxonomy per KA
 (see [Multi-source design](#multi-source-design)); external reference
 literature can be added the same way once it has its own taxonomy file.
@@ -45,7 +45,7 @@ This section describes the key concepts and the sequential stages of the pipelin
 
 -   **Taxonomy**: A formal classification that maps raw text to a structured
     knowledge hierarchy.
-    -   **What it is**: In this project, it's the `kbprep/rag/taxonomy/swebok_v4.yaml`
+    -   **What it is**: In this project, it's the `data/taxonomy/swebok_v4.yaml`
         file. It defines a list of `topics` for a given **KA (Knowledge Area)**, which
         is a top-level chapter of the SWEBOK guide.
     -   **How it works**: Each topic in the YAML (e.g., `topic_name: "Requirements
@@ -179,7 +179,7 @@ more than one source correctly.
   in `cli._build_shared` and reused across every source.
 - **Adding a SWEBOK-like source** (has its own numbered "N. Topic" headings):
   add the PDF under `RawMaterials/...` and a matching
-  `kbprep/rag/taxonomy/{source_id}.yaml` (`ka_id`, `ka_name`,
+  `data/taxonomy/{source_id}.yaml` (`ka_id`, `ka_name`,
   `source_version`, `topics: [{id, name}, ...]`).
 - **Adding external reference literature** (no comparable topic structure):
   same steps, but the taxonomy file can have an empty `topics: []` — every

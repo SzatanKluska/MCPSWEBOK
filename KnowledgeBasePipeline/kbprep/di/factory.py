@@ -8,13 +8,13 @@ from __future__ import annotations
 import yaml
 
 from ..shared.config import Config
-from .ports import DocumentExtractor, TextCleaner, TaxonomyMapper, Chunker, Embedder, VectorStore
+from ..ports import DocumentExtractor, TextCleaner, TaxonomyMapper, Chunker, Embedder, VectorStore
 
 
 def build_extractor(cfg: Config) -> DocumentExtractor:
     ex = cfg["extractor"]
     if ex["provider"] == "pdfplumber":
-        from .adapters.pdf_pdfplumber import PdfPlumberExtractor
+        from ..adapters.pdf_pdfplumber import PdfPlumberExtractor
         return PdfPlumberExtractor(
             min_font_size=ex.get("min_font_size", 8.5),
             two_column=ex.get("two_column", True),
@@ -41,21 +41,21 @@ def _taxonomy_path(cfg: Config, source_id: str) -> str:
 def build_cleaner(cfg: Config, extra_drop_patterns: list[str] | None = None) -> TextCleaner:
     cl = cfg["cleaner"]
     if cl["provider"] == "basic":
-        from .adapters.cleaner_basic import BasicCleaner
+        from ..adapters.cleaner_basic import BasicCleaner
         patterns = [*cl.get("drop_patterns", []), *(extra_drop_patterns or [])]
         return BasicCleaner(drop_patterns=patterns)
     raise ValueError(f"Unknown cleaner provider: {cl['provider']}")
 
 
 def build_taxonomy_mapper(cfg: Config, source_id: str) -> TaxonomyMapper:
-    from .adapters.taxonomy_swebok import SwebokTaxonomyMapper
+    from ..adapters.taxonomy_swebok import SwebokTaxonomyMapper
     return SwebokTaxonomyMapper(_taxonomy_path(cfg, source_id))
 
 
 def build_chunker(cfg: Config, source_id: str) -> Chunker:
     ch = cfg["chunker"]
     if ch["provider"] == "structure":
-        from .adapters.chunker_structure import StructureChunker
+        from ..adapters.chunker_structure import StructureChunker
         with open(_taxonomy_path(cfg, source_id), encoding="utf-8") as fh:
             tax = yaml.safe_load(fh)
         return StructureChunker(
@@ -71,7 +71,7 @@ def build_chunker(cfg: Config, source_id: str) -> Chunker:
 def build_embedder(cfg: Config) -> Embedder:
     em = cfg["embedder"]
     if em["provider"] == "sentence_transformers":
-        from .adapters.embedder_sentence_transformers import SentenceTransformersEmbedder
+        from ..adapters.embedder_sentence_transformers import SentenceTransformersEmbedder
         return SentenceTransformersEmbedder(
             model=em.get("model", "BAAI/bge-small-en-v1.5"),
             query_prefix=em.get("query_prefix", ""),
@@ -82,10 +82,10 @@ def build_embedder(cfg: Config) -> Embedder:
 def build_vector_store(cfg: Config) -> VectorStore:
     vs = cfg["vector_store"]
     if vs["provider"] == "numpy":
-        from .adapters.vectorstore_numpy import NumpyVectorStore
+        from ..adapters.vectorstore_numpy import NumpyVectorStore
         return NumpyVectorStore(persist_dir=cfg.path("vector_store", "persist_dir"))
     if vs["provider"] == "chroma":
-        from .adapters.vectorstore_chroma import ChromaVectorStore
+        from ..adapters.vectorstore_chroma import ChromaVectorStore
         return ChromaVectorStore(
             collection=vs.get("collection", "swebok"),
             persist_dir=cfg.path("vector_store", "persist_dir"),

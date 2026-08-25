@@ -1,26 +1,33 @@
 #!/usr/bin/env node
-// Reports, for every subsystem in the repo: its language, the source root that
-// language's conventions put the code under, the folders that currently sit at
-// LEVEL 1 under that root, and any source files loose at the root.
+// Reports two things, both purely mechanical — no semantic judgment:
 //
-// Level 1 is the only level this skill constrains — it must equal the set of
-// documented modules. Everything deeper is the module's own business and is
-// deliberately NOT reported in detail.
+//   1. LANGUAGE PROJECTS FOUND — every project in the repo, its language, the
+//      source root that language's own build config or convention puts code
+//      under (with the AUTHORITY that decided it), the folders sitting at
+//      LEVEL 1 under that root, and any source files loose at the root.
 //
-// The script is purely descriptive: it reads manifests and the filesystem and
-// never decides what a module is. Comparing level-1 folders against the
-// documented module set is the agent's job.
+//   2. DOCUMENTED MODULES — if an architecture doc in the system-class-diagram
+//      format exists, the module names parsed out of each subsystem's
+//      `### Module Contract` classDiagram box list.
 //
-// Usage: node structure-status.mjs [repoRoot]
+// LEVEL 1 is the only level this skill constrains: it must equal the documented
+// module set. Everything deeper is the module's own business and is deliberately
+// summarised, not enumerated — this skill never flattens.
+//
+// Correlating a project to a documented subsystem, deciding which module a file
+// belongs to, and building a move plan are all the agent's job.
+//
+// Usage: node structure-status.mjs [diagramPathRelativeToRepoRoot]
 
+import { execSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, resolve, sep } from "node:path";
 
 const IGNORED = new Set([
   "node_modules", ".git", ".venv", "venv", "env", "__pycache__", "dist",
-  "build", "out", "target", "bin", "obj", ".next", ".nuxt", "coverage",
-  ".pytest_cache", ".mypy_cache", ".tox", ".gradle", ".idea", ".vscode",
-  "vendor", "Pods", ".dart_tool",
+  "build", "out", "target", "bin", "obj", ".next", ".nuxt", ".turbo",
+  "coverage", ".pytest_cache", ".mypy_cache", ".tox", ".gradle", ".idea",
+  ".vscode", "vendor", "Pods", ".dart_tool",
 ]);
 
 const EXT_BY_LANG = {
@@ -68,7 +75,7 @@ function listFiles(dir, exts) {
 function countDeep(dir, exts) {
   let files = 0;
   let dirs = 0;
-  const walk = (d, depth) => {
+  const walk = (d) => {
     let entries;
     try {
       entries = readdirSync(d, { withFileTypes: true });
@@ -80,17 +87,17 @@ function countDeep(dir, exts) {
       const p = join(d, e.name);
       if (e.isDirectory()) {
         dirs++;
-        walk(p, depth + 1);
+        walk(p);
       } else if (exts.some((x) => e.name.endsWith(x))) {
         files++;
       }
     }
   };
-  walk(dir, 0);
+  walk(dir);
   return { files, dirs };
 }
 
-// --- find subsystems -------------------------------------------------------
+// --- find projects ---------------------------------------------------------
 
 const MANIFESTS = [
   "package.json", "tsconfig.json", "pyproject.toml", "setup.py", "setup.cfg",
@@ -98,8 +105,8 @@ const MANIFESTS = [
   "build.gradle.kts", "composer.json", "Gemfile",
 ];
 
-function findSubsystems(root) {
-  const found = new Map(); // dir -> Set(manifest)
+function findProjects(root) {
+  const found = new Map();
   const walk = (dir, depth) => {
     if (depth > 4) return;
     let entries;
@@ -131,10 +138,9 @@ function detectLanguage(dir, manifests) {
   const has = (m) => manifests.has(m);
   if (has("tsconfig.json")) return "typescript";
   if (has("package.json")) {
-    // a package.json with .ts sources but no tsconfig is still TypeScript
     const pkg = readJsonc(join(dir, "package.json"));
-    const dev = { ...(pkg?.dependencies ?? {}), ...(pkg?.devDependencies ?? {}) };
-    return "typescript" in dev ? "typescript" : "javascript";
+    const deps = { ...(pkg?.dependencies ?? {}), ...(pkg?.devDependencies ?? {}) };
+    return "typescript" in deps ? "typescript" : "javascript";
   }
   if (has("go.mod")) return "go";
   if (has("Cargo.toml")) return "rust";
@@ -148,8 +154,8 @@ function detectLanguage(dir, manifests) {
   return "unknown";
 }
 
-// Returns { root, authority } — root is the directory whose LEVEL 1 must equal
-// the module set; authority says which file or convention decided that.
+// root = the directory whose LEVEL 1 must equal the module set.
+// authority = which file or language convention decided that.
 function detectSourceRoot(dir, lang) {
   const at = (...p) => join(dir, ...p);
   const ok = (p) => existsSync(p) && statSync(p).isDirectory();
@@ -178,15 +184,14 @@ function detectSourceRoot(dir, lang) {
   }
 
   if (lang === "python") {
-    const pkgsIn = (base) =>
-      listDirs(base).filter((d) => existsSync(join(base, d, "__init__.py")));
+    const pkgsIn = (base) => listDirs(base).filter((d) => existsSync(join(base, d, "__init__.py")));
     if (ok(at("src"))) {
       const pkgs = pkgsIn(at("src"));
       if (pkgs.length === 1) {
         return { root: at("src", pkgs[0]), authority: `src-layout: src/${pkgs[0]}/ (importable package)` };
       }
       if (pkgs.length > 1) {
-        return { root: at("src"), authority: `src-layout with ${pkgs.length} packages: ${pkgs.join(", ")}`, multi: pkgs };
+        return { root: at("src"), authority: `src-layout, ${pkgs.length} packages: ${pkgs.join(", ")}`, multi: pkgs };
       }
     }
     const pkgs = pkgsIn(dir);
@@ -194,13 +199,13 @@ function detectSourceRoot(dir, lang) {
       return { root: at(pkgs[0]), authority: `flat layout: ${pkgs[0]}/ (importable package)` };
     }
     if (pkgs.length > 1) {
-      return { root: dir, authority: `flat layout with ${pkgs.length} packages: ${pkgs.join(", ")}`, multi: pkgs };
+      return { root: dir, authority: `flat layout, ${pkgs.length} packages: ${pkgs.join(", ")}`, multi: pkgs };
     }
     return { root: dir, authority: "no __init__.py package found" };
   }
 
   if (lang === "rust") return { root: at("src"), authority: "Cargo convention: src/" };
-  if (lang === "go") return { root: dir, authority: "Go module root (see cmd/, internal/, pkg/)" };
+  if (lang === "go") return { root: dir, authority: "Go module root (cmd/, internal/, pkg/)" };
   if (lang === "jvm") {
     for (const p of ["src/main/java", "src/main/kotlin"]) {
       if (ok(at(p))) return { root: at(p), authority: `Maven/Gradle standard layout: ${p}/` };
@@ -224,53 +229,100 @@ function detectSourceRoot(dir, lang) {
   return { root: dir, authority: "unknown language" };
 }
 
-// --- report ----------------------------------------------------------------
+// --- documented modules ----------------------------------------------------
 
-const repoRoot = resolve(process.argv[2] ?? process.cwd());
-const subsystems = findSubsystems(repoRoot);
-
-if (subsystems.size === 0) {
-  console.log("No subsystem manifest found under " + posix(repoRoot));
-  process.exit(0);
+function parseDocumentedModules(diagramPath) {
+  if (!existsSync(diagramPath)) return null;
+  const text = readFileSync(diagramPath, "utf8");
+  const out = [];
+  const headings = [...text.matchAll(/^## (.+)$/gm)].filter(
+    (m) => !/^(Context|Changelog|Reading these diagrams)$/.test(m[1].trim()),
+  );
+  for (let i = 0; i < headings.length; i++) {
+    const title = headings[i][1].trim();
+    const start = headings[i].index;
+    const end = i + 1 < headings.length ? headings[i + 1].index : text.length;
+    const section = text.slice(start, end);
+    const contractIdx = section.indexOf("### Module Contract");
+    if (contractIdx < 0) continue;
+    const fenceStart = section.indexOf("```mermaid", contractIdx);
+    const fenceEnd = section.indexOf("```", fenceStart + 10);
+    if (fenceStart < 0 || fenceEnd < 0) continue;
+    const block = section.slice(fenceStart, fenceEnd);
+    const modules = [...block.matchAll(/^\s*class (\w+)\s*\{/gm)].map((m) => m[1]);
+    const entry = /ENTRY POINT/.test(block)
+      ? (block.match(/^\s*class (\w+)\s*\{[^}]*ENTRY POINT/m) ?? [])[1] ?? null
+      : null;
+    out.push({ title, modules, entry });
+  }
+  return out;
 }
 
-// A nested manifest inside another subsystem's source tree is usually a
-// sub-package, not a separate subsystem; report the outermost ones first.
-const dirs = [...subsystems.keys()].sort((a, b) => a.length - b.length);
+// --- report ----------------------------------------------------------------
 
-console.log("REPO: " + posix(repoRoot));
-console.log("SUBSYSTEMS: " + dirs.length);
+let repoRoot;
+try {
+  repoRoot = execSync("git rev-parse --show-toplevel", { encoding: "utf8" }).trim();
+} catch {
+  repoRoot = process.cwd();
+}
+
+const diagramArg = process.argv[2] || "docs/architecture/system-class-diagram.md";
+const diagramPath = resolve(repoRoot, diagramArg);
+
+console.log("--- LANGUAGE PROJECTS FOUND (source root per that language's own convention) ---");
+const projects = findProjects(repoRoot);
+const dirs = [...projects.keys()].sort((a, b) => a.length - b.length);
+
+if (dirs.length === 0) {
+  console.log("  none found");
+}
 
 for (const dir of dirs) {
-  const manifests = subsystems.get(dir);
+  const manifests = projects.get(dir);
   const lang = detectLanguage(dir, manifests);
   const { root, authority, multi } = detectSourceRoot(dir, lang);
   const exts = EXT_BY_LANG[lang] ?? [];
 
   console.log("");
-  console.log("--- SUBSYSTEM: " + (posix(relative(repoRoot, dir)) || "."));
-  console.log("    language:    " + lang);
-  console.log("    manifests:   " + [...manifests].sort().join(", "));
-  console.log("    source root: " + (posix(relative(repoRoot, root)) || ".") + "   [" + authority + "]");
+  console.log("[" + lang + "] " + (posix(relative(repoRoot, dir)) || "."));
+  console.log("  manifests:   " + [...manifests].sort().join(", "));
+  console.log("  source root: " + (posix(relative(repoRoot, root)) || "."));
+  console.log("  authority:   " + authority);
 
   if (multi) {
-    console.log("    NOTE: multiple packages here — each is its own module namespace;");
-    console.log("          decide with the user which one the module set applies to.");
+    console.log("  NOTE: multiple packages here — each is its own module namespace;");
+    console.log("        decide with the user which one the module set applies to.");
   }
 
   const level1 = listDirs(root);
-  console.log("    LEVEL-1 FOLDERS (this set must equal the documented module set):");
-  if (level1.length === 0) {
-    console.log("      (none)");
-  }
+  console.log("  LEVEL-1 FOLDERS (this set must equal the documented module set):");
+  if (level1.length === 0) console.log("    (none)");
   for (const d of level1) {
     const { files, dirs: sub } = countDeep(join(root, d), exts);
-    const depth = sub > 0 ? `, ${sub} sub-folder${sub === 1 ? "" : "s"}` : ", flat";
-    console.log(`      ${d.padEnd(22)} ${files} file${files === 1 ? "" : "s"}${depth}`);
+    const nest = sub > 0 ? `${sub} sub-folder${sub === 1 ? "" : "s"}` : "flat";
+    console.log(`    ${d.padEnd(22)} ${String(files).padStart(3)} file${files === 1 ? " " : "s"}, ${nest}`);
   }
 
   const loose = listFiles(root, exts);
-  console.log("    ROOT-LEVEL SOURCE FILES (only the language's entry/manifest files belong here):");
-  if (loose.length === 0) console.log("      (none)");
-  for (const f of loose) console.log("      " + f);
+  console.log("  ROOT-LEVEL SOURCE FILES (only the entry point / language-mandated files belong here):");
+  if (loose.length === 0) console.log("    (none)");
+  for (const f of loose) console.log("    " + f);
+}
+
+console.log("");
+console.log("--- DOCUMENTED MODULES (from " + (posix(relative(repoRoot, diagramPath)) || ".") + ") ---");
+const documented = parseDocumentedModules(diagramPath);
+if (documented === null) {
+  console.log("  diagram not found — run the system-class-diagram skill first, or");
+  console.log("  derive module boundaries fresh and have the user approve them.");
+} else if (documented.length === 0) {
+  console.log("  diagram found but no Module Contract sections parsed — check its format.");
+} else {
+  for (const s of documented) {
+    console.log("");
+    console.log("  " + s.title);
+    console.log("    modules: " + s.modules.join(", "));
+    if (s.entry) console.log("    entry point module: " + s.entry);
+  }
 }

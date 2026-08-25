@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from typing import Protocol, runtime_checkable, Sequence
 
-from .models import Document, Section, Chunk
+from ..models import Document, Section, Chunk
 
 
 @runtime_checkable

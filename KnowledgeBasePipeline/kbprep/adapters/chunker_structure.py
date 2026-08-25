@@ -10,7 +10,7 @@ import hashlib
 import re
 
 from ..models import Section, Document, Chunk
-from ...figures.sidecar import figure_refs
+from ..figures.sidecar import figure_refs
 
 _SENT_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9])")
 
