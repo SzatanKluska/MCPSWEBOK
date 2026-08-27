@@ -6,6 +6,7 @@ paths:
   raw_materials: ./RawMaterials
   taxonomy_dir: ./data/taxonomy   # one {source_id}.yaml per source (per KA/book)
   figures: ./data/figures  # authored figure sidecars (input, per source_id)
+  figures_extract: ./data/figures_extract  # crop geometry for figure extraction (input, per source_id)
   output: ./output                    # internal artifacts (QA report)
   knowledge_base: ../KnowledgeBase    # handoff contract consumed by the MCP server
 

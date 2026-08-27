@@ -1,0 +1,47 @@
+# Figure definitions for SWEBOK v4.0, Chapter 14 "Software Engineering
+# Professional Practice".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "14.1"
+    caption: "Breakdown of Topics for the Software Engineering Professional Practice KA"
+    page: 2
+    image: "figures/figure-14-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Engineering Professional Practice
+      Knowledge Area into its three top-level topics and their subtopics: (1)
+      Professionalism, (2) Group Dynamics and Psychology, and (3) Communication
+      Skills. Each top-level topic decomposes into the subtopics covered in
+      this KA.
+    mermaid: |
+      flowchart TD
+        PP["Software Engineering Professional Practice"]
+        PP --> P["Professionalism"]
+        PP --> G["Group Dynamics and Psychology"]
+        PP --> C["Communication Skills"]
+        P --> P1["Accreditation Certification and Qualification, and Licensing"]
+        P --> P2["Code of Ethics and Professional Conduct"]
+        P --> P3["Nature and Role of Professional Societies"]
+        P --> P4["Nature and Role of Software Engineering Standards"]
+        P --> P5["Economic Impact of Software"]
+        P --> P6["Employment Contracts"]
+        P --> P7["Legal Issues"]
+        P --> P8["Documentation"]
+        P --> P9["Trade-off Analysis"]
+        G --> G1["Dynamics of Working in Teams/Groups"]
+        G --> G2["Individual Cognition"]
+        G --> G3["Dealing with Problem Complexity"]
+        G --> G4["Interacting with Stakeholders"]
+        G --> G5["Dealing with Uncertainty and Ambiguity"]
+        G --> G6["Dealing with Equity, Diversity and Inclusivity"]
+        C --> C1["Reading, Understanding, and Summarizing"]
+        C --> C2["Writing"]
+        C --> C3["Team and Group Communication"]
+        C --> C4["Presentation Skills"]

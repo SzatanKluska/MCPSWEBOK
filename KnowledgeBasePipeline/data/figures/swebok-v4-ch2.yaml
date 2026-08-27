@@ -1,0 +1,90 @@
+# Figure definitions for SWEBOK v4.0, Chapter 2 "Software Architecture".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, screenshots, or list/tabular
+# content, which a diagram grammar cannot faithfully represent; those rely on
+# `description` alone.
+
+figures:
+  - id: "2.1"
+    caption: "Breakdown of Topics for the Software Architecture KA"
+    page: 2
+    image: "figures/figure-2-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Architecture Knowledge Area into
+      its four top-level topics and their subtopics: (1) Software Architecture
+      Fundamentals, (2) Software Architecture Description, (3) Software
+      Architecture Process, and (4) Software Architecture Evaluation. Each
+      top-level topic decomposes into the subtopics covered in this KA.
+    mermaid: |
+      flowchart LR
+        SA["Software Architecture"]
+        SA --> F["1. Software Architecture Fundamentals"]
+        SA --> D["2. Software Architecture Description"]
+        SA --> P["3. Software Architecture Process"]
+        SA --> E["4. Software Architecture Evaluation"]
+        F --> F1["The Senses of \"architecture\""]
+        F --> F2["Stakeholders and Concerns"]
+        F --> F3["Uses of Architecture"]
+        D --> D1["Architecture Views and Viewpoints"]
+        D --> D2["Architecture Styles and Patterns"]
+        D --> D3["Architecture Description Languages and Architecture Framework"]
+        D --> D4["Architecture as Significant Decisions"]
+        P --> P1["Architecture in Context"]
+        P --> P2["Architectural Design"]
+        P --> P3["Architecture Methods and Tactics"]
+        P --> P4["Architecture in the Large"]
+        E --> E1["Goodness in Architecture"]
+        E --> E2["Reasoning about Architectures"]
+        E --> E3["Architecture Reviews"]
+        E --> E4["Architecture Metrics"]
+
+  - id: "2.2"
+    caption: "Examples of Architectural Concerns"
+    page: 3
+    image: "figures/figure-2-2.jpg"
+    description: >-
+      A bordered box listing example architectural concerns as a flat,
+      alphabetically ordered set of terms (not a hierarchy or process):
+      affordability, agility, assurance, autonomy, availability, behavior,
+      business goals and strategies, complexity, compliance with regulation,
+      concurrency, control, cost, data accessibility, deployability,
+      disposability, energy efficiency, evolvability, extensibility,
+      feasibility, flexibility, functionality, information assurance,
+      inter-process communication, interoperability, known limitations,
+      maintainability, modifiability, modularity, openness, performance,
+      privacy, quality of service, reliability, resource utilization,
+      reusability, safety, scalability, schedule, security, system modes,
+      software structure, subsystem integration, sustainability, system
+      features, testability, usability, usage, and user experience.
+    mermaid: null
+
+  - id: "2.3"
+    caption: "A general model of architectural design"
+    page: 8
+    image: "figures/figure-2-3.jpg"
+    description: >-
+      A general model of the architectural design process. Multiple groups of
+      stakeholders, each holding their own concerns, interact bidirectionally
+      with the design process (concerns flow in, feedback flows back out). At
+      the center of the process are three major activities arranged as a
+      cycle: Analysis gathers and formulates architecturally significant
+      requirements from stakeholder concerns and context; Analysis feeds
+      architectural requirements to Synthesis, which develops candidate
+      architectural concepts, alternatives, and decisions; Synthesis feeds
+      those into Evaluation, which produces weightings and scores that flow
+      back into Analysis, closing the loop. The diagram emphasizes that
+      architectural design is iterative and stakeholder-driven rather than a
+      single linear pass.
+    mermaid: |
+      flowchart LR
+        ST1["Stakeholders"] -- concerns --> AN
+        ST2["Stakeholders"] -- concerns --> AN
+        ST3["Stakeholders"] -- concerns --> EV
+        AN["Analysis"] -- "architectural requirements" --> SY["Synthesis"]
+        SY -- "architectural concepts, alternatives, decisions" --> EV["Evaluation"]
+        EV -- "weightings, scores" --> AN

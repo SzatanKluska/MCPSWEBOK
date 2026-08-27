@@ -1,0 +1,70 @@
+# Figure definitions for SWEBOK v4.0, Chapter 4 "Software Construction".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, screenshots, or list/tabular
+# content, which a diagram grammar cannot faithfully represent; those rely on
+# `description` alone.
+
+figures:
+  - id: "4.1"
+    caption: "Breakdown of Topics for the Software Construction KA"
+    page: 3
+    image: "figures/figure-4-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Construction Knowledge Area into
+      its five top-level topics and their subtopics: (1) Software
+      Construction Fundamentals, (2) Managing Construction, (3) Practical
+      Considerations, (4) Construction Technologies, and (5) Software
+      Construction Tools. Each top-level topic decomposes into the subtopics
+      covered in this KA; Construction Technologies has by far the most
+      subtopics.
+    mermaid: |
+      flowchart LR
+        SC["Software Construction"]
+        SC --> F["1. Software Construction Fundamentals"]
+        SC --> M["2. Managing Construction"]
+        SC --> P["3. Practical Considerations"]
+        SC --> T["4. Construction Technologies"]
+        SC --> O["5. Software Construction Tools"]
+        F --> F1["Minimizing Complexity"]
+        F --> F2["Anticipating and Embracing Change"]
+        F --> F3["Construction for Verification"]
+        F --> F4["Reusing Assets"]
+        F --> F5["Applying Standards in Construction"]
+        M --> M1["Construction in Life Cycle Models"]
+        M --> M2["Construction Planning"]
+        M --> M3["Construction Measurements"]
+        M --> M4["Managing Dependencies"]
+        P --> P1["Construction Design"]
+        P --> P2["Construction Languages"]
+        P --> P3["Coding"]
+        P --> P4["Construction Testing"]
+        P --> P5["Reuse in Construction"]
+        P --> P6["Construction Quality"]
+        P --> P7["Integration"]
+        P --> P8["Cross-Platform Development and Migration"]
+        T --> T1["API Design and Use"]
+        T --> T2["Object-Oriented Runtime Issues"]
+        T --> T3["Parameterization, Templates and Generics"]
+        T --> T4["Assertions, Design by Contract and Defensive Programming"]
+        T --> T5["Error Handling, Exception Handling and Fault Tolerance"]
+        T --> T6["Executable Models"]
+        T --> T7["State-Based and Table-Driven Construction Techniques"]
+        T --> T8["Runtime Configuration and Internationalization"]
+        T --> T9["Grammar-Based Input Processing"]
+        T --> T10["Concurrency Primitives"]
+        T --> T11["Middleware"]
+        T --> T12["Construction Methods for Distribution and Cloud-Based Software"]
+        T --> T13["Constructing Heterogeneous Systems"]
+        T --> T14["Performance Analysis and Tuning"]
+        T --> T15["Platform Standards"]
+        T --> T16["Test-First Programming"]
+        T --> T17["Feedback Loop for Construction"]
+        O --> O1["Development Environments"]
+        O --> O2["Visual Programming and Low-Code/Zero-Code Platforms"]
+        O --> O3["Unit Testing Tools"]
+        O --> O4["Proofing, Performance Analysis and Slicing Tools"]

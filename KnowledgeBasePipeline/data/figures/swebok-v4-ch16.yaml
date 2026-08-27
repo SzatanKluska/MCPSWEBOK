@@ -1,0 +1,188 @@
+# Figure definitions for SWEBOK v4.0, Chapter 16 "Computing Foundations".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "16.1"
+    caption: "Breakdown of Topics for the Computing Foundations KA"
+    page: 2
+    image: "figures/figure-16-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Computing Foundations Knowledge Area into
+      its nine top-level topics and their subtopics: (1) Basic Concepts of a
+      System or Solution, (2) Computer Architecture and Organization, (3) Data
+      Structures and Algorithms, (4) Programming Fundamentals and Languages,
+      (5) Operating Systems, (6) Database Management, (7) Computer Networks and
+      Communications, (8) Human Factors: User and Developer, and (9) Artificial
+      Intelligence and Machine Learning. Each top-level topic (except the first)
+      decomposes into the subtopics covered in this KA.
+    mermaid: |
+      flowchart LR
+        CF["Computing Foundations"]
+        CF --> B["1. Basic Concepts of a System or Solution"]
+        CF --> A["2. Computer Architecture and Organization"]
+        CF --> D["3. Data Structures and Algorithms"]
+        CF --> P["4. Programming Fundamentals and Languages"]
+        CF --> O["5. Operating Systems"]
+        CF --> M["6. Database Management"]
+        CF --> N["7. Computer Networks and Communications"]
+        CF --> H["8. Human Factors: User and Developer"]
+        CF --> I["9. Artificial Intelligence and Machine Learning"]
+        A --> A1["Computer Architecture"]
+        A --> A2["Types of Computer Architecture"]
+        A --> A3["Microarchitecture or Computer Organization"]
+        A --> A4["Memory Unit"]
+        A --> A5["Input/Output Devices"]
+        A --> A6["Control Unit"]
+        D --> D1["Types of Data Structures"]
+        D --> D2["Operations on Data Structures"]
+        D --> D3["Algorithms and Attributes of Algorithms"]
+        D --> D4["Algorithm Complexity"]
+        D --> D5["Measurement of Complexity"]
+        D --> D6["Designing Algorithms"]
+        D --> D7["Sorting Techniques"]
+        D --> D8["Searching Techniques"]
+        D --> D9["Hashing"]
+        P --> P1["Programming Language Types"]
+        P --> P2["Programming Syntax, Semantics, Type Systems"]
+        P --> P3["Subprograms and Coroutines"]
+        P --> P4["Object-Oriented Programming"]
+        P --> P5["Distributed Programming and Parallel Programming"]
+        P --> P6["Debugging"]
+        P --> P7["Standards and Guidelines"]
+        O --> O1["Processor Management"]
+        O --> O2["Memory Management"]
+        O --> O3["Device Management"]
+        O --> O4["Information Management"]
+        O --> O5["Network Management"]
+        M --> M1["Schema"]
+        M --> M2["Data Models and Storage Models"]
+        M --> M3["Database Management Systems"]
+        M --> M4["Relational Database Management Systems and Normalization"]
+        M --> M5["Structured Query Language"]
+        M --> M6["Data Mining and Data Warehousing"]
+        M --> M7["Database Backup and Recovery"]
+        N --> N1["Types of Computer Networks"]
+        N --> N2["Layered Architectures of Networks"]
+        N --> N3["Open Systems Interconnection Model"]
+        N --> N4["Encapsulation and Decapsulation"]
+        N --> N5["Application Layer Protocols"]
+        N --> N6["Design Techniques for Reliable and Efficient Networks"]
+        N --> N7["Internet Protocol Suite"]
+        N --> N8["Wireless and Mobile Networks"]
+        N --> N9["Security and Vulnerabilities"]
+        H --> H1["User Human Factors"]
+        H --> H2["Developer Human Factors"]
+        I --> I1["Reasoning"]
+        I --> I2["Learning"]
+        I --> I3["Models"]
+        I --> I4["Perception and Problem-Solving"]
+        I --> I5["Natural Language Processing"]
+
+  - id: "16.2"
+    caption: "Computer Architecture"
+    page: 4
+    image: "figures/figure-16-2.jpg"
+    description: >-
+      Block diagram of the Von Neumann computer architecture. Memory sits at
+      the top. Input Devices sits at the lower left and Output Devices at the
+      lower right; the ALU (Arithmetic Logic Unit) and Control Unit are drawn
+      as a nested pair of boxes in the lower middle, together forming the CPU.
+      A directed arrow runs from Input Devices up to Memory. A plain
+      (undirected) line connects Output Devices to Memory. A directed arrow
+      runs from the ALU/Control Unit block up to Memory. Bidirectional arrows
+      connect the ALU/Control Unit block to Input Devices on its left and to
+      Output Devices on its right, since the control unit synchronizes all
+      devices, memory, and the ALU.
+    mermaid: |
+      flowchart TD
+        Mem["Memory"]
+        CPU["ALU / Control Unit"]
+        IN["Input Devices"]
+        OUT["Output Devices"]
+        IN --> Mem
+        OUT --- Mem
+        CPU --> Mem
+        IN <--> CPU
+        CPU <--> OUT
+
+  - id: "16.3"
+    caption: "Example of Coroutine"
+    page: 12
+    image: "figures/figure-16-3.jpg"
+    description: >-
+      Control-flow example of three coroutines, Subroutine S1, S2 and S3, each
+      drawn as a vertical column of statements (dots) interspersed with
+      "Resume S<n>" calls; curved arrows show where control transfers to and
+      resumes from. Execution proceeds: S1 runs from its start and executes
+      "Resume S2," transferring control to the entry (top) of S2. S2 runs from
+      its entry and executes "Resume S1," transferring control back into S1,
+      which resumes right after its earlier "Resume S2" call (not from the
+      top). S1 continues and executes "Resume S3," transferring control to the
+      entry (top) of S3 — the first time S3 runs. S3 runs from its entry and
+      executes "Resume S2," transferring control back into S2, which resumes
+      right after its earlier "Resume S1" call. S2 continues and executes
+      "Resume S3," transferring control back into S3, which resumes right
+      after its earlier "Resume S2" call. S3 continues and executes "Resume
+      S1," transferring control back into S1, which resumes right after its
+      earlier "Resume S3" call and runs to completion. This illustrates the
+      defining coroutine property: each resume re-enters the target routine at
+      the point where it last left off, not at its beginning.
+    mermaid: |
+      flowchart TD
+        S1a["S1: start"] -- "Resume S2" --> S2a["S2: entry"]
+        S2a -- "Resume S1" --> S1b["S1: resume (after its Resume S2)"]
+        S1b -- "Resume S3" --> S3a["S3: entry"]
+        S3a -- "Resume S2" --> S2b["S2: resume (after its Resume S1)"]
+        S2b -- "Resume S3" --> S3b["S3: resume (after its Resume S2)"]
+        S3b -- "Resume S1" --> S1c["S1: resume (after its Resume S3) - runs to completion"]
+
+  - id: "16.4"
+    caption: "Pictorial Representation of Layered Networking"
+    page: 21
+    image: "figures/figure-16-4.jpg"
+    description: >-
+      Two peer hosts, drawn side by side, each with an identical stack of five
+      layers: Layer 5 (Application Layer) at the top, then Layer 4, Layer 3,
+      Layer 2, and Layer 1 (Physical Layer) at the bottom. Within each host,
+      adjacent layers are connected by bidirectional arrows (each layer
+      provides services to the layer above it). Each layer on the left host is
+      also connected by a horizontal line to the same-numbered layer on the
+      right host, labeled with the corresponding "Layer N Protocol" — the rules
+      used in the conversation between peer layer-n entities on the two
+      systems.
+    mermaid: |
+      flowchart TD
+        subgraph HostA["Host A"]
+          A5["Layer 5 (Application Layer)"]
+          A4["Layer 4"]
+          A3["Layer 3"]
+          A2["Layer 2"]
+          A1["Layer 1 (Physical Layer)"]
+          A5 <--> A4
+          A4 <--> A3
+          A3 <--> A2
+          A2 <--> A1
+        end
+        subgraph HostB["Host B"]
+          B5["Layer 5 (Application Layer)"]
+          B4["Layer 4"]
+          B3["Layer 3"]
+          B2["Layer 2"]
+          B1["Layer 1 (Physical Layer)"]
+          B5 <--> B4
+          B4 <--> B3
+          B3 <--> B2
+          B2 <--> B1
+        end
+        A5 -- "Layer 5 Protocol" --- B5
+        A4 -- "Layer 4 Protocol" --- B4
+        A3 -- "Layer 3 Protocol" --- B3
+        A2 -- "Layer 2 Protocol" --- B2
+        A1 -- "Layer 1 Protocol" --- B1

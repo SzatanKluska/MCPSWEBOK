@@ -1,0 +1,195 @@
+# Figure definitions for SWEBOK v4.0, Chapter 15 "Software Engineering Economics".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "15.1"
+    caption: "Breakdown of Topics for the Software Engineering Economics KA"
+    page: 2
+    image: "figures/figure-15-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Engineering Economics Knowledge Area
+      into its ten top-level topics and their subtopics: (1) Software Engineering
+      Economics Fundamentals, (2) The Engineering Decision-Making Process, (3)
+      For-Profit Decision-Making, (4) Nonprofit Decision-Making, (5) Present
+      Economy Decision-Making, (6) Multiple-Attribute Decision-Making, (7)
+      Identifying and Characterizing Intangible Assets, (8) Estimation, (9)
+      Practical Considerations, and (10) Related Concepts. Each top-level topic
+      decomposes into the subtopics covered in this KA.
+    mermaid: |
+      flowchart LR
+        SE["Software Engineering Economics"]
+        SE --> F["1. Software Engineering Economics Fundamentals"]
+        SE --> D["2. The Engineering Decision-Making Process"]
+        SE --> P["3. For-Profit Decision-Making"]
+        SE --> N["4. Nonprofit Decision-Making"]
+        SE --> E["5. Present Economy Decision-Making"]
+        SE --> M["6. Multiple-Attribute Decision-Making"]
+        SE --> I["7. Identifying and Characterizing Intangible Assets"]
+        SE --> S["8. Estimation"]
+        SE --> C["9. Practical Considerations"]
+        SE --> R["10. Related Concepts"]
+        F --> F1["Proposals"]
+        F --> F2["Cash Flow"]
+        F --> F3["Time-Value of Money"]
+        F --> F4["Equivalence"]
+        F --> F5["Bases for Comparison"]
+        F --> F6["Alternatives"]
+        F --> F7["Intangible Assets"]
+        F --> F8["Business Model"]
+        D --> D1["Process Overview"]
+        D --> D2["Understand the Real Problem"]
+        D --> D3["Identify all Reasonable Technically-Feasible Solutions"]
+        D --> D4["Define the Selection Criteria"]
+        D --> D5["Evaluate each Alternative against the Selection Criteria"]
+        D --> D6["Select the Preferred Alternative"]
+        D --> D7["Monitor the Performance of the Selected Alternative"]
+        P --> P1["Minimum Acceptable Rate of Return"]
+        P --> P2["Economic Life"]
+        P --> P3["Planning Horizon"]
+        P --> P4["Replacement Decisions"]
+        P --> P5["Retirement Decisions"]
+        P --> P6["Advanced For-Profit Decision Considerations"]
+        N --> N1["Benefit-Cost Analysis"]
+        N --> N2["Cost-Effectiveness Analysis"]
+        E --> E1["Break-Even Analysis"]
+        E --> E2["Optimization Analysis"]
+        M --> M1["Compensatory Techniques"]
+        M --> M2["Non-Compensatory Techniques"]
+        I --> I1["Identify Processes and Define Business Goals"]
+        I --> I2["Identify Intangible Assets linked with Business Goals"]
+        I --> I3["Identify Software Products that Support Intangible Assets"]
+        I --> I4["Define and Measure Indicators"]
+        I --> I5["Intangible Asset Characterization"]
+        I --> I6["Link Specific Intangible Assets with the Business Model"]
+        I --> I7["Decision Making"]
+        S --> S1["Expert Judgment"]
+        S --> S2["Analogy"]
+        S --> S3["Decomposition"]
+        S --> S4["Parametric"]
+        S --> S5["Multiple Estimates"]
+        C --> C1["Business Case"]
+        C --> C2["Multiple-Currency Analysis"]
+        C --> C3["Systems Thinking"]
+        R --> R1["Accounting Cost and Costing"]
+        R --> R2["Finance"]
+        R --> R3["Controlling"]
+        R --> R4["Efficiency and Effectiveness"]
+        R --> R5["Productivity"]
+        R --> R6["Product or Service"]
+        R --> R7["Project"]
+        R --> R8["Program"]
+        R --> R9["Portfolio"]
+        R --> R10["Product Lifecycle"]
+        R --> R11["Project Lifecycle"]
+        R --> R12["Price and Pricing"]
+        R --> R13["Prioritization"]
+
+  - id: "15.2"
+    caption: "A Cash Flow Diagram"
+    page: 3
+    image: "figures/figure-15-2.jpg"
+    description: >-
+      An example cash flow diagram: time (in unlabeled periods, e.g. years) runs
+      left to right along a horizontal axis numbered 0 through 7, and money
+      amounts are drawn as vertical arrows at each time point, with upward arrows
+      denoting incoming cash flow instances (income) and downward arrows denoting
+      outgoing cash flow instances (expense); arrow length is roughly proportional
+      to the amount. At time 0 there is a large downward arrow of -$10,000 (the
+      initial investment/expense). At time 1, an upward arrow of $650. At time 2,
+      a downward arrow of -$850. At time 3, an upward arrow of $2,900. At time 4,
+      an upward arrow of $8,150 (the largest incoming amount). At time 5, an
+      upward arrow of $5,900. At time 6, an upward arrow of $3,650. At time 7, an
+      upward arrow of $1,400. This illustrates how a proposal's complete
+      financial view — how much money goes out or comes in, and when — can be
+      summarized visually.
+    mermaid: null
+
+  - id: "15.3"
+    caption: "The Engineering Decision-Making Process"
+    page: 5
+    image: "figures/figure-15-3.jpg"
+    description: >-
+      The engineering decision-making process shown as a stepwise sequence.
+      "Understand the real problem" feeds into two parallel steps, "Define the
+      selection criteria" and "Identify all reasonable technically feasible
+      solutions," which both feed into "Evaluate each alternative against the
+      selection criteria." That step leads to "Select the preferred alternative,"
+      which leads to "Monitor the performance of the selected alternative,"
+      after which the process continues (an open arrow at the end indicates the
+      process is not necessarily terminal — steps can be iterative, can overlap,
+      and can occur in different sequences in practice).
+    mermaid: |
+      flowchart TD
+        A["Understand the real problem"] --> B["Define the selection criteria"]
+        A --> C["Identify all reasonable technically feasible solutions"]
+        B --> D["Evaluate each alternative against the selection criteria"]
+        C --> D
+        D --> E["Select the preferred alternative"]
+        E --> F["Monitor the performance of the selected alternative"]
+        F --> G(( ))
+
+  - id: "15.4"
+    caption: "The For-Profit Decision-Making Process"
+    page: 8
+    image: "figures/figure-15-4.jpg"
+    description: >-
+      Flowchart for identifying the financially best alternative out of a set of
+      proposals. Start leads to "Arrange the alternatives in order of increasing
+      initial investment," then "Assume the first alternative is the current
+      best," then the decision "Are there more alternatives to compare?" If No,
+      "The current best is the best overall" and the process stops. If Yes, flow
+      goes to "Compare the next candidate to the current best," then the decision
+      "Is the next candidate strictly better than the current best?" If No, flow
+      loops back to the "Are there more alternatives to compare?" decision. If
+      Yes, "Make that next candidate the new current best," which also loops back
+      to the "Are there more alternatives to compare?" decision. The loop repeats
+      until no more alternatives remain, at which point the current best is
+      declared best overall.
+    mermaid: |
+      flowchart TD
+        Start(["Start"]) --> Arrange["Arrange the alternatives in order of\nincreasing initial investment"]
+        Arrange --> Assume["Assume the first alternative is the current best"]
+        Assume --> D1{"Are there more alternatives to compare?"}
+        D1 -- Yes --> Compare["Compare the next candidate to the current best"]
+        D1 -- No --> Best["The current best is the best overall"]
+        Compare --> D2{"Is the next candidate strictly better\nthan the current best?"}
+        D2 -- No --> D1
+        D2 -- Yes --> NewBest["Make that next candidate the new current best"]
+        NewBest --> D1
+        Best --> Stop(["Stop"])
+
+  - id: "15.5"
+    caption: "Extended Characterization of Specific Intangible Assets"
+    page: 14
+    image: "figures/figure-15-5.jpg"
+    description: |-
+      A 2x2 quadrant diagram (Case 1) characterizing a specific intangible asset
+      by two crossed thresholds — a horizontal Quality Threshold and a vertical
+      Impact Threshold — producing four states based on whether quality and
+      impact are each acceptable or not:
+
+      | | Impact below threshold | Impact above threshold |
+      |---|---|---|
+      | Quality above threshold | Replaceable | Stable |
+      | Quality below threshold | Warning | Evolving |
+
+      Two additional partial-information cases are overlaid on the same grid for
+      assets that only have one kind of indicator. Case 2 (Only Quality
+      Indicators) reuses just the left/quality axis, spanning both left-hand
+      quadrants, and classifies the asset as "Acceptable Quality" (above the
+      quality threshold) or "Unacceptable Quality" (below it), ignoring impact.
+      Case 3 (Only Impact Indicators) reuses just the bottom/impact axis,
+      spanning both bottom quadrants, and classifies the asset as "Unacceptable
+      Impact" (left of the impact threshold) or "Acceptable Impact" (right of
+      it), ignoring quality. The three cases are drawn as overlapping dashed/
+      dotted bounding boxes around the shared quadrant grid to show that they are
+      three different views (fewer or more indicators available) of the same
+      underlying quality/impact space, not three separate diagrams.
+    mermaid: null

@@ -1,0 +1,51 @@
+# Figure definitions for SWEBOK v4.0, Chapter 13 "Software Security".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "13.1"
+    caption: "Breakdown of Topics for the Software Security KA"
+    page: 2
+    image: "figures/figure-13-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Security Knowledge Area into its
+      six top-level topics and their subtopics: (1) Software Security
+      Fundamentals, (2) Security Management and Organization, (3) Software
+      Security Engineering and Process, (4) Security Engineering for Software
+      Systems, (5) Software Security Tools, and (6) Domain Specific Software
+      Security. Each top-level topic decomposes into the subtopics covered in
+      this KA.
+    mermaid: |
+      flowchart TD
+        SS["Software Security"]
+        SS --> F["Software Security Fundamentals"]
+        SS --> M["Security Management and Organization"]
+        SS --> E["Software Security Engineering and Process"]
+        SS --> G["Security Engineering for Software Systems"]
+        SS --> T["Software Security Tools"]
+        SS --> D["Domain Specific Software Security"]
+        F --> F1["Software Security"]
+        F --> F2["Information Security"]
+        F --> F3["Cybersecurity"]
+        M --> M1["Capability Maturity Model"]
+        M --> M2["Information Security Management System"]
+        M --> M3["Agile Practice for Software Security"]
+        E --> E1["Security Engineering and Development Lifecycle"]
+        E --> E2["Common Criteria for Information Technology Security Evaluation"]
+        G --> G1["Security Requirements"]
+        G --> G2["Security Design"]
+        G --> G3["Security Patterns"]
+        G --> G4["Construction for Security"]
+        G --> G5["Security Testing"]
+        G --> G6["Vulnerability Management"]
+        T --> T1["Security Vulnerability Checking Tools"]
+        T --> T2["Penetration Testing Tools"]
+        D --> D1["Security for Container and Cloud"]
+        D --> D2["Security for IoT Software"]
+        D --> D3["Security for Machine Learning-Based Application"]

@@ -1,0 +1,69 @@
+# Figure definitions for SWEBOK v4.0, Chapter 3 "Software Design".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, screenshots, or list/tabular
+# content, which a diagram grammar cannot faithfully represent; those rely on
+# `description` alone.
+
+figures:
+  - id: "3.1"
+    caption: "Breakdown of topics for the Software Design KA"
+    page: 2
+    image: "figures/figure-3-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Design Knowledge Area into its
+      six top-level topics and their subtopics: (1) Software Design
+      Fundamentals, (2) Software Design Processes, (3) Software Design
+      Qualities, (4) Recording Software Design, (5) Software Design
+      Strategies and Methods, and (6) Software Design Analysis and
+      Evaluations. Each top-level topic decomposes into the subtopics covered
+      in this KA.
+    mermaid: |
+      flowchart LR
+        SD["Software Design"]
+        SD --> F["1. Software Design Fundamentals"]
+        SD --> P["2. Software Design Processes"]
+        SD --> Q["3. Software Design Qualities"]
+        SD --> R["4. Recording Software Design"]
+        SD --> S["5. Software Design Strategies and Methods"]
+        SD --> A["6. Software Design Analysis and Evaluations"]
+        F --> F1["Design Thinking"]
+        F --> F2["Context of Software Design"]
+        F --> F3["Key Issues in Software Design"]
+        F --> F4["Software Design Principles"]
+        P --> P1["High-Level Design"]
+        P --> P2["Detailed Design"]
+        Q --> Q1["Concurrency"]
+        Q --> Q2["Control and Event Handling"]
+        Q --> Q3["Data Persistence"]
+        Q --> Q4["Distribution of Components"]
+        Q --> Q5["Errors and Exception Handling"]
+        Q --> Q6["Integration and Interoperability"]
+        Q --> Q7["Assurance, Security, Safety"]
+        Q --> Q8["Variability"]
+        R --> R1["Model-Based Design"]
+        R --> R2["Structural Design Description"]
+        R --> R3["Behavioral Design Description"]
+        R --> R4["Design Patterns"]
+        R --> R5["Specialized Domain-Specific Languages"]
+        R --> R6["Design Rationale"]
+        S --> S1["General Strategies"]
+        S --> S2["Function-Oriented"]
+        S --> S3["Data-Centered"]
+        S --> S4["Object-Oriented"]
+        S --> S5["User-Centered"]
+        S --> S6["Component-Based"]
+        S --> S7["Event-Driven"]
+        S --> S8["Aspect-Oriented"]
+        S --> S9["Constraint-Based"]
+        S --> S10["Domain-Driven Design"]
+        S --> S11["Other Methods"]
+        A --> A1["Design Reviews and Audits"]
+        A --> A2["Quality Attributes"]
+        A --> A3["Quality Analysis and Evaluation Techniques"]
+        A --> A4["Measures and Metrics"]
+        A --> A5["Verification, Validation and Certification"]

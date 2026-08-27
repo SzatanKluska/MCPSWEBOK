@@ -1,0 +1,111 @@
+# Figure definitions for SWEBOK v4.0, Chapter 7 "Software Maintenance".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "7.1"
+    caption: "Breakdown of Topics for the Software Maintenance KA"
+    page: 2
+    image: "figures/figure-7-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Maintenance Knowledge Area into
+      its five top-level topics and their subtopics: (1) Software Maintenance
+      Fundamentals, (2) Key Issues in Software Maintenance, (3) Software
+      Maintenance Processes, (4) Software Maintenance Techniques, and (5)
+      Software Maintenance Tools (which has no listed subtopics in the
+      figure). Each top-level topic decomposes into the subtopics covered in
+      this KA.
+    mermaid: |
+      flowchart LR
+        SM["Software Maintenance"]
+        SM --> F["1. Software Maintenance Fundamentals"]
+        SM --> K["2. Key Issues in Software Maintenance"]
+        SM --> P["3. Software Maintenance Processes"]
+        SM --> T["4. Software Maintenance Techniques"]
+        SM --> TL["5. Software Maintenance Tools"]
+        F --> F1["Definitions and Terminology"]
+        F --> F2["Nature of Software Maintenance"]
+        F --> F3["Need of Software Maintenance"]
+        F --> F4["Evolution of Software"]
+        F --> F5["Categories of Software Maintenance"]
+        K --> K1["Technical Issues"]
+        K --> K2["Management Issues"]
+        K --> K3["Software Maintenance Cost"]
+        K --> K4["Software Maintenance Measurements"]
+        P --> P1["Software Maintenance Processes"]
+        P --> P2["Software Maintenance Activities and Tasks"]
+        T --> T1["Program Comprehension"]
+        T --> T2["Software Reengineering"]
+        T --> T3["Reverse Engineering"]
+        T --> T4["CI/CD, Testing and Deployment"]
+
+  - id: "7.2"
+    caption: "Software Maintenance Categories"
+    page: 4
+    image: "figures/figure-7-2.jpg"
+    description: >-
+      Classification tree of the five categories of software maintenance
+      requests, regrouped under two parent categories. Modification Request
+      splits into Correction and Enhancement. Correction leads to Corrective,
+      Preventive, and Adaptive maintenance. Enhancement leads to Adaptive,
+      Additive, and Perfective maintenance. Adaptive maintenance is shared:
+      it is reached from both Correction and Enhancement, reflecting that it
+      can be viewed as either a correction (keeping the product usable) or an
+      enhancement (adapting it to a changed environment).
+    mermaid: |
+      flowchart TD
+        MR["Modification Request"]
+        MR --> COR["Correction"]
+        MR --> ENH["Enhancement"]
+        COR --> Corrective["Corrective"]
+        COR --> Preventive["Preventive"]
+        COR --> Adaptive["Adaptive"]
+        ENH --> Adaptive
+        ENH --> Additive["Additive"]
+        ENH --> Perfective["Perfective"]
+
+  - id: "7.3"
+    caption: "Software Maintenance Processes (ISO/IEC/IEEE 14764) [1]"
+    page: 11
+    image: "figures/figure-7-3.jpg"
+    description: >-
+      Diagram of how the Software Maintenance Process (ISO/IEC/IEEE 14764)
+      relates to the surrounding software life-cycle processes. Inside the
+      Software Maintenance Process box, four activities flow left to right
+      and top to bottom: Prepare for Maintenance leads to Perform
+      Maintenance, and both Prepare for Maintenance and Perform Maintenance
+      lead into Perform Logistic Support, which leads to Manage Results of
+      Maintenance and Logistics. Outside the box, Operation and Development
+      each have a bidirectional connection into the left edge of the process
+      box (between Prepare for Maintenance and Perform Logistic Support),
+      showing the maintenance process interacts with both ongoing operation
+      and development. Outward, one-directional connections lead from the
+      right edge of the box (from Perform Maintenance) to Disposal and to
+      Transition, the two possible downstream life-cycle stages.
+    mermaid: |
+      flowchart LR
+        Op["Operation"]
+        Dev["Development"]
+        Disp["Disposal"]
+        Trans["Transition"]
+        subgraph SMP["Software Maintenance Process"]
+          direction LR
+          Prep["Prepare for Maintenance"]
+          Perf["Perform Maintenance"]
+          Log["Perform Logistic Support"]
+          Manage["Manage Results of Maintenance and Logistics"]
+          Prep --> Perf
+          Prep --> Log
+          Perf --> Log
+          Log --> Manage
+        end
+        Op <--> SMP
+        Dev <--> SMP
+        SMP --> Disp
+        SMP --> Trans

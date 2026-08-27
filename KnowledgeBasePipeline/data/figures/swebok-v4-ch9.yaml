@@ -1,0 +1,54 @@
+# Figure definitions for SWEBOK v4.0, Chapter 9 "Software Engineering Management".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "9.1"
+    caption: "Breakdown of Topics for the Software Engineering Management KA"
+    page: 4
+    image: "figures/figure-9-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Engineering Management
+      Knowledge Area into its seven top-level topics and their subtopics:
+      (1) Initiation and Scope Definition, (2) Software Project Planning, (3)
+      Software Project Enactment, (4) Software Review and Evaluation, (5)
+      Closure, (6) Software Engineering Measurement, and (7) Software
+      Engineering Management Tools (which has no listed subtopics in the
+      figure). Each top-level topic decomposes into the subtopics covered in
+      this KA.
+    mermaid: |
+      flowchart LR
+        SEM["Software Engineering Management"]
+        SEM --> I["1. Initiation and Scope Definition"]
+        SEM --> P["2. Software Project Planning"]
+        SEM --> E["3. Software Project Enactment"]
+        SEM --> R["4. Software Review and Evaluation"]
+        SEM --> C["5. Closure"]
+        SEM --> M["6. Software Engineering Measurement"]
+        SEM --> T["7. Software Engineering Management Tools"]
+        I --> I1["Determination and Negotiation of Requirements"]
+        I --> I2["Feasibility Analysis"]
+        I --> I3["Process for the Review and Revision of Requirements"]
+        P --> P1["Process Planning"]
+        P --> P2["Determine Deliverables"]
+        P --> P3["Effort, Schedule, and Cost Estimation"]
+        E --> E1["Implementation of Plans"]
+        E --> E2["Software Acquisition and Supplier Contract Management"]
+        E --> E3["Implementation of Measurement Process"]
+        E --> E4["Monitor Process"]
+        E --> E5["Control Process"]
+        E --> E6["Reporting"]
+        R --> R1["Determine Satisfaction of Requirements"]
+        R --> R2["Reviewing and Evaluating Performance"]
+        C --> C1["Determine Closure"]
+        C --> C2["Closure Activities"]
+        M --> M1["Establish and Sustain Measurement Commitment"]
+        M --> M2["Plan the Measurement Process"]
+        M --> M3["Perform the Measurement Process"]
+        M --> M4["Evaluate Measurement"]

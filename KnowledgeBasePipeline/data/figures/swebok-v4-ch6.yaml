@@ -1,0 +1,88 @@
+# Figure definitions for SWEBOK v4.0, Chapter 6 "Software Engineering Operations".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "6.1"
+    caption: "Breakdown of Topics for the Software Engineering Operations KA."
+    page: 2
+    image: "figures/figure-6-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Engineering Operations Knowledge
+      Area into its six top-level topics and their subtopics: (1) Software
+      Engineering Operations Fundamentals, (2) Software Engineering Operations
+      Planning, (3) Software Engineering Operations Delivery, (4) Software
+      Engineering Operations Control, (5) Practical Considerations, and (6)
+      Software Engineering Operations Tools. Each top-level topic decomposes
+      into the subtopics covered in this KA.
+    mermaid: |
+      flowchart LR
+        SEO["Software Engineering Operations"]
+        SEO --> F["1. Software Engineering Operations Fundamentals"]
+        SEO --> P["2. Software Engineering Operations Planning"]
+        SEO --> D["3. Software Engineering Operations Delivery"]
+        SEO --> C["4. Software Engineering Operations Control"]
+        SEO --> PC["5. Practical Considerations"]
+        SEO --> T["6. Software Engineering Operations Tools"]
+        F --> F1["Definition of Software Engineering Operations"]
+        F --> F2["Software Engineering Operations Processes"]
+        F --> F3["Software Installation"]
+        F --> F4["Scripting and Automating"]
+        F --> F5["Effective Testing and Troubleshooting"]
+        F --> F6["Performance, Reliability and Load Balancing"]
+        P --> P1["Operations Plan and Supplier Management"]
+        P --> P2["Development and Operational Environment"]
+        P --> P3["Software Availability, Continuity and Service Levels"]
+        P --> P4["Software Capacity Management"]
+        P --> P5["Software and Data Safety, Security, Integrity, Protection and Controls"]
+        D --> D1["Deployment/Release Engineering"]
+        D --> D2["Rollback and Data Migration"]
+        D --> D3["Change Management"]
+        D --> D4["Problem Management"]
+        C --> C1["Incident Management"]
+        C --> C2["Monitor, Measure, Track and Review"]
+        C --> C3["Operations Support"]
+        C --> C4["Operations Service Reporting"]
+        PC --> PC1["Incident and Problem Prevention"]
+        PC --> PC2["Operational Risk Management"]
+        PC --> PC3["Automated Software Engineering Operations"]
+        PC --> PC4["Software Engineering Operations for Very Small Entities"]
+        T --> T1["Containers and Incident Visualization"]
+        T --> T2["Deployment"]
+        T --> T3["Automated Tests"]
+        T --> T4["Monitoring and Telemetry"]
+
+  - id: "6.2"
+    caption: "Software Engineering Operations Processes and Activities"
+    page: 4
+    image: "figures/figure-6-2.jpg"
+    description: >-
+      A cyclic process diagram of the three software engineering operations
+      process groups: Operations Planning Processes flows into Operations
+      Delivery Processes, which flows into Operations Control Processes, which
+      flows back into Operations Planning Processes, forming a continuous
+      loop. Next to Operations Delivery Processes is its list of activities:
+      Operational Testing, Verification and Acceptance; Deployment/Release
+      Engineering; Rollback and Data Migration; and Problem Resolution. Below,
+      associated with Operations Control Processes, is its list of activities:
+      Incident and Change Management; Monitor, Measure, Track and Review;
+      Operations Support; and Service Reporting.
+    mermaid: |
+      flowchart LR
+        P["Operations Planning Processes"] --> D["Operations Delivery Processes"]
+        D --> C["Operations Control Processes"]
+        C --> P
+        D --> D1["Operational Testing, Verification and Acceptance"]
+        D --> D2["Deployment/Release Engineering"]
+        D --> D3["Rollback and Data Migration"]
+        D --> D4["Problem Resolution"]
+        C --> C1["Incident and Change Management"]
+        C --> C2["Monitor, Measure, Track and Review"]
+        C --> C3["Operations Support"]
+        C --> C4["Service Reporting"]

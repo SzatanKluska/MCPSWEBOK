@@ -1,0 +1,34 @@
+# Figure-crop geometry for SWEBOK v4.0, Chapter 18 "Engineering Foundations".
+#
+# Consumed by kbprep.figures.extract to crop each Figure N.M out of the
+# source PDF into KnowledgeBase/figures/figure-N-M.jpg. `page` is 0-based.
+# `column` is left|right|full (which half of a two-column page the figure
+# sits in). `top` bounds the crop's top edge: header (below the running
+# header), top (page top), or after:<fig_id> (below a preceding figure on
+# the same page).
+#
+# NOTE on Figure 18.3: its page (idx 13) has zero vector/raster graphics --
+# it is a plain-text code listing, not a drawing. figure_box() now falls
+# back to unioning page text (extract_words()) between top_bound and the
+# caption when no graphics/images are found, so this crops correctly.
+#
+# header: 55 (below) overrides the default 40pt: this chapter's running
+# header ("18-14  SWEBOK GUIDE V4.0a") runs to ~53pt, taller than most
+# chapters, so the default threshold let header words leak into figure 18.3's
+# text-fallback crop.
+
+header: 55
+
+figures:
+  - id: "18.1"
+    page: 1
+    column: full
+    top: header
+  - id: "18.2"
+    page: 2
+    column: full
+    top: header
+  - id: "18.3"
+    page: 13
+    column: full
+    top: header

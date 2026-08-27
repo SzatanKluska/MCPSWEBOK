@@ -1,0 +1,29 @@
+# Figure-crop geometry for SWEBOK v4.0, Chapter 2 "Software Architecture".
+#
+# Consumed by kbprep.figures.extract to crop each Figure N.M out of the
+# source PDF into KnowledgeBase/figures/figure-N-M.jpg. `page` is 0-based.
+# `column` is left|right|full (which half of a two-column page the figure
+# sits in). `top` bounds the crop's top edge: header (below the running
+# header), top (page top), or after:<fig_id> (below a preceding figure on
+# the same page).
+#
+# NOTE (Figure 2.3): the source diagram is embedded as a single raster
+# image with no vector lines/rects/curves on the page. figure_box() now
+# also unions page.images into its graphics search (previously only
+# lines/rects/curves), so this crops correctly; verified chapter 1's
+# crops are byte-identical after that change (none of its figures are
+# raster-embedded, so it was never affected).
+
+figures:
+  - id: "2.1"
+    page: 1
+    column: full
+    top: header
+  - id: "2.2"
+    page: 2
+    column: right
+    top: header
+  - id: "2.3"
+    page: 7
+    column: full
+    top: header

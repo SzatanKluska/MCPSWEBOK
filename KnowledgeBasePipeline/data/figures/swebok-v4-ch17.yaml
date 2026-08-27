@@ -1,0 +1,465 @@
+# Figure definitions for SWEBOK v4.0, Chapter 17 "Mathematical Foundations".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are Venn diagrams, plots, or tables, which a diagram
+# grammar cannot faithfully represent (or which are better read as a table);
+# those rely on `description` alone. Figures 17.18 and 17.21 have two lettered
+# sub-panels, (a) and (b), sharing a single caption; each is captured as one
+# crop covering both panels, described together.
+
+figures:
+  - id: "17.1"
+    caption: "Breakdown of Topics for the Mathematical Foundations KA"
+    page: 2
+    image: "figures/figure-17-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Mathematical Foundations Knowledge Area into
+      its twelve top-level topics, each a direct child of "Mathematical
+      Foundations": (1) Basic Logic, (2) Proof Techniques, (3) Set, Relation,
+      Function, (4) Graph and Tree, (5) Finite-State Machine, (6) Grammar, (7)
+      Number Theory, (8) Basics of Counting, (9) Discrete Probability, (10)
+      Numerical Precision, Accuracy and Error, (11) Algebraic Structures, and
+      (12) Calculus. Some topics further decompose into subtopics: Basic Logic
+      into Propositional Logic and Predicate Logic; Proof Techniques into Direct
+      Proof, Proof by Contradiction, Proof by Induction, and Proof by Example;
+      Set, Relation, Function into Set Operations, Properties at Set, and
+      Relations and Functions; Graph and Tree into Graph and Tree; Grammar into
+      Language Recognition; Number Theory into Types of Numbers, Divisibility,
+      Prime Number, and Greatest Common Divisor; and Algebraic Structures into
+      Group and Ring. Finite-State Machine, Basics of Counting, Discrete
+      Probability, Numerical Precision/Accuracy/Error, and Calculus have no
+      further subtopics shown.
+    mermaid: |
+      flowchart LR
+        MF["Mathematical Foundations"]
+        MF --> BL["1. Basic Logic"]
+        MF --> PT["2. Proof Techniques"]
+        MF --> SRF["3. Set, Relation, Function"]
+        MF --> GT["4. Graph and Tree"]
+        MF --> FSM["5. Finite-State Machine"]
+        MF --> GR["6. Grammar"]
+        MF --> NT["7. Number Theory"]
+        MF --> BC["8. Basics of Counting"]
+        MF --> DP["9. Discrete Probability"]
+        MF --> NPAE["10. Numerical Precision, Accuracy and Error"]
+        MF --> AS["11. Algebraic Structures"]
+        MF --> CAL["12. Calculus"]
+        BL --> BL1["Propositional Logic"]
+        BL --> BL2["Predicate Logic"]
+        PT --> PT1["Direct Proof"]
+        PT --> PT2["Proof by Contradiction"]
+        PT --> PT3["Proof by Induction"]
+        PT --> PT4["Proof by Example"]
+        SRF --> SRF1["Set Operations"]
+        SRF --> SRF2["Properties at Set"]
+        SRF --> SRF3["Relations and Functions"]
+        GT --> GT1["Graph"]
+        GT --> GT2["Tree"]
+        GR --> GR1["Language Recognition"]
+        NT --> NT1["Types of Numbers"]
+        NT --> NT2["Divisibility"]
+        NT --> NT3["Prime Number"]
+        NT --> NT4["Greatest Common Divisor"]
+        AS --> AS1["Group"]
+        AS --> AS2["Ring"]
+
+  - id: "17.2"
+    caption: "Venn Diagram for Set X"
+    page: 5
+    image: "figures/figure-17-2.jpg"
+    description: >-
+      A Venn diagram for a single set X. A rectangle labeled U (the universal
+      set) contains a shaded oval labeled X, representing an arbitrary set
+      within the universe of discourse.
+    mermaid: null
+
+  - id: "17.3"
+    caption: "Intersection of Sets X and Y"
+    page: 5
+    image: "figures/figure-17-3.jpg"
+    description: >-
+      A Venn diagram illustrating the intersection of two sets X and Y. Rectangle
+      U contains two overlapping ovals labeled X and Y; only the overlapping
+      region is shaded, and an arrow points from that shaded region to a box
+      labeled X ∩ Y, indicating the intersection consists of the elements common
+      to both sets.
+    mermaid: null
+
+  - id: "17.4"
+    caption: "Union of Sets X and Y"
+    page: 6
+    image: "figures/figure-17-4.jpg"
+    description: >-
+      A Venn diagram illustrating the union of two sets X and Y. Rectangle U
+      contains two overlapping ovals labeled X and Y; the entire area covered by
+      both ovals, including the overlap, is shaded, with an arrow pointing to a
+      box labeled X ∪ Y.
+    mermaid: null
+
+  - id: "17.5"
+    caption: "Venn Diagram for Complement Set of X"
+    page: 6
+    image: "figures/figure-17-5.jpg"
+    description: >-
+      A Venn diagram illustrating the complement of set X. Rectangle U contains
+      an unshaded oval labeled X; the region inside U but outside the oval —
+      i.e., everywhere except X — is shaded, representing the complement set X′.
+    mermaid: null
+
+  - id: "17.6"
+    caption: "Venn Diagram for X − Y"
+    page: 6
+    image: "figures/figure-17-6.jpg"
+    description: >-
+      A Venn diagram illustrating the set difference X − Y. Rectangle U contains
+      two overlapping ovals labeled X and Y; only the part of X that does not
+      overlap with Y is shaded, with an arrow pointing to a box labeled X − Y.
+    mermaid: null
+
+  - id: "17.7"
+    caption: "Vertical Line Test for Function"
+    page: 7
+    image: "figures/figure-17-7.jpg"
+    description: >-
+      A plot with axes X (horizontal) and Y (vertical, no numeric scale) showing
+      a single continuous curve that winds irregularly — a loop on the left and
+      an S-shaped cusp on the right. Two vertical dashed lines, L1 and L2, are
+      drawn at two different x-values; both lines cross the curve three times.
+      This demonstrates the vertical line test: because a single x-value (at L1
+      or at L2) corresponds to three different y-values on the curve, the
+      relation graphed is not a function.
+    mermaid: null
+
+  - id: "17.8"
+    caption: "Example of a Graph"
+    page: 8
+    image: "figures/figure-17-8.jpg"
+    description: >-
+      An undirected graph G = (V, E) with three vertices, A, B, C, arranged as a
+      triangle, and three edges: e1 connecting A and C, e2 connecting B and C,
+      and e3 connecting A and B. Illustrates the basic definition of a graph —
+      vertices plus edges as unordered pairs.
+    mermaid: |
+      flowchart LR
+        A((A))
+        B((B))
+        C((C))
+        A ---|e1| C
+        B ---|e2| C
+        A ---|e3| B
+
+  - id: "17.9"
+    caption: "Example of a Multigraph"
+    page: 8
+    image: "figures/figure-17-9.jpg"
+    description: >-
+      The same triangle graph as Figure 17.8 (vertices A, B, C; edges e1 = A–C,
+      e2 = B–C, e3 = A–B) with an additional edge e4 also connecting A and B,
+      drawn as a curved arc. Because two edges (e3 and e4) connect the same pair
+      of vertices, this is a multigraph.
+    mermaid: |
+      flowchart LR
+        A((A))
+        B((B))
+        C((C))
+        A ---|e1| C
+        B ---|e2| C
+        A ---|e3| B
+        A ---|e4| B
+
+  - id: "17.10"
+    caption: "Example of a Pseudograph"
+    page: 8
+    image: "figures/figure-17-10.jpg"
+    description: >-
+      The same triangle graph (vertices A, B, C with edges e1 = A–C, e2 = B–C,
+      e3 = A–B) with an additional edge e4 that starts and ends at the same
+      vertex, B, drawn as a small loop. Because it contains a loop, this is a
+      pseudograph.
+    mermaid: |
+      flowchart LR
+        A((A))
+        B((B))
+        C((C))
+        A ---|e1| C
+        B ---|e2| C
+        A ---|e3| B
+        B ---|e4| B
+
+  - id: "17.11"
+    caption: "Example of a Directed Graph"
+    page: 8
+    image: "figures/figure-17-11.jpg"
+    description: >-
+      A directed version of the same triangle graph: vertices A, B, C with
+      directed edges e1 (A → C), e2 (B → C), and e3 (B → A), each drawn with an
+      arrowhead showing its direction.
+    mermaid: |
+      flowchart LR
+        A((A))
+        B((B))
+        C((C))
+        A -->|e1| C
+        B -->|e2| C
+        B -->|e3| A
+
+  - id: "17.12"
+    caption: "Example of a Weighted Graph"
+    page: 8
+    image: "figures/figure-17-12.jpg"
+    description: >-
+      The same directed triangle graph as Figure 17.11, with a numeric weight
+      attached to each edge: e1 (A → C) has weight 76, e2 (B → C) has weight 93,
+      and e3 (B → A) has weight 15. Illustrates a weighted graph — e.g.,
+      representing distances between three cities.
+    mermaid: |
+      flowchart LR
+        A((A))
+        B((B))
+        C((C))
+        A -->|"e1, 76"| C
+        B -->|"e2, 93"| C
+        B -->|"e3, 15"| A
+
+  - id: "17.13"
+    caption: "Example of Cycles C3 and C4"
+    page: 9
+    image: "figures/figure-17-13.jpg"
+    description: >-
+      Two example cycle graphs shown side by side. C3 (left) is a 3-cycle:
+      vertices A, B, C connected in a triangle by edges e3 (A–B), e2 (B–C), and
+      e1 (C–A). C4 (right) is a 4-cycle: vertices A, B, C, D connected in a
+      square by edges e4 (A–B), e3 (B–C), e1 (C–D), and e2 (D–A). Illustrates the
+      general definition of a cycle Cn on n vertices.
+    mermaid: |
+      flowchart LR
+        subgraph C3["Cycle C3"]
+          A1((A)) ---|e3| B1((B))
+          B1 ---|e2| C1((C))
+          C1 ---|e1| A1
+        end
+        subgraph C4["Cycle C4"]
+          A2((A)) ---|e4| B2((B))
+          B2 ---|e3| C2((C))
+          C2 ---|e1| D2((D))
+          D2 ---|e2| A2
+        end
+
+  - id: "17.14"
+    caption: "Adjacency List for the Graph in Figure 17.10"
+    page: 9
+    image: "figures/figure-17-14.jpg"
+    description: |-
+      Adjacency list for the pseudograph in Figure 17.10 (vertices A, B, C,
+      where B has a self-loop). Each row lists a vertex and the vertices
+      adjacent to it:
+
+      | Vertex | Adjacent Nodes |
+      |---|---|
+      | A | B, C |
+      | B | A, B, C |
+      | C | A, B |
+    mermaid: null
+
+  - id: "17.15"
+    caption: "Example of a Tree"
+    page: 10
+    image: "figures/figure-17-15.jpg"
+    description: >-
+      A rooted tree with root A, which has three children: B, C, and D. B has
+      three children, E, F, and G; C has two children, H and I; and D has two
+      children, J and K. All arrows point away from the root, indicating
+      parent-to-child edges.
+    mermaid: |
+      flowchart TD
+        A --> B
+        A --> C
+        A --> D
+        B --> E
+        B --> F
+        B --> G
+        C --> H
+        C --> I
+        D --> J
+        D --> K
+
+  - id: "17.16"
+    caption: "Examples of Binary Trees"
+    page: 11
+    image: "figures/figure-17-16.jpg"
+    description: >-
+      Two binary trees shown side by side to illustrate that a binary tree is
+      ordered: both trees have root A and two leaf children, B and C, but in the
+      left tree B is the left child and C is the right child, while in the right
+      tree the positions are swapped — C is the left child and B is the right
+      child. Despite having the same nodes, the two trees are considered
+      different because the left/right positions of the children differ.
+    mermaid: |
+      flowchart LR
+        subgraph T1["Tree 1"]
+          A1((A)) --> B1((B))
+          A1 --> C1((C))
+        end
+        subgraph T2["Tree 2"]
+          A2((A)) --> C2((C))
+          A2 --> B2((B))
+        end
+
+  - id: "17.17"
+    caption: "Example of a Full Binary Tree"
+    page: 11
+    image: "figures/figure-17-17.jpg"
+    description: >-
+      A binary tree with root A. A's left child is leaf C (no children of its
+      own), and A's right child is B, which itself has two children, D and E.
+      Both internal nodes (A and B) have exactly two children each, making this
+      a full (strictly) binary tree.
+    mermaid: |
+      flowchart TD
+        A --> C
+        A --> B
+        B --> D
+        B --> E
+
+  - id: "17.18"
+    caption: "Example of Complete Binary Trees"
+    page: 11
+    image: "figures/figure-17-18.jpg"
+    description: >-
+      Two complete binary trees, labelled (a) and (b), sharing one caption. Tree
+      (a): root A has children B and C; B has children D and E; C has children F
+      and G — every level is completely filled, so (a) is both complete and full
+      (every internal node has exactly two children). Tree (b): root A has
+      children B and C; B has a single child, D; C has no children — the last
+      level is not full, but the existing nodes occupy the left-most available
+      positions, so (b) is complete but not full, since B has only one child
+      instead of two.
+    mermaid: |
+      flowchart LR
+        subgraph a["(a)"]
+          A1((A)) --> B1((B))
+          A1 --> C1((C))
+          B1 --> D1((D))
+          B1 --> E1((E))
+          C1 --> F1((F))
+          C1 --> G1((G))
+        end
+        subgraph b["(b)"]
+          A2((A)) --> B2((B))
+          A2 --> C2((C))
+          B2 --> D2((D))
+        end
+
+  - id: "17.19"
+    caption: "A Binary Search Tree"
+    page: 12
+    image: "figures/figure-17-19.jpg"
+    description: >-
+      A binary search tree with root 9. Its left subtree is rooted at 5
+      (children 2 and 7; 2's children are 1 and 4; 7's children are 6 and 8).
+      Its right subtree is rooted at 13 (children 11 and 15; 11 has a single
+      child, 10; 15 is a leaf). Every node's left subtree contains only smaller
+      keys and its right subtree only larger keys, consistent with the BST
+      property. The chapter text gives the traversal outputs for this tree:
+      preorder 9, 5, 2, 1, 4, 7, 6, 8, 13, 11, 10, 15; postorder 1, 4, 2, 6, 8, 7,
+      5, 10, 11, 15, 13, 9; in-order 1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15.
+    mermaid: |
+      flowchart TD
+        N9((9)) --> N5((5))
+        N9 --> N13((13))
+        N5 --> N2((2))
+        N5 --> N7((7))
+        N13 --> N11((11))
+        N13 --> N15((15))
+        N2 --> N1((1))
+        N2 --> N4((4))
+        N7 --> N6((6))
+        N7 --> N8((8))
+        N11 --> N10((10))
+
+  - id: "17.20"
+    caption: "Example of an FSM"
+    page: 12
+    image: "figures/figure-17-20.jpg"
+    description: >-
+      A finite-state machine (Mealy machine) with three states, S0, S1, S2. S0
+      is the initial state (marked by an unlabeled incoming arrow) and S1 is the
+      sole accept state (drawn as a double circle). Each transition arrow is
+      labeled "input,output": S0 on input 1 goes to S1, producing output 2; S0
+      on input 0 goes to S2, producing output 3; S1 on input 0 goes to S2,
+      producing output 3; S1 on input 1 also goes to S2 (a second, parallel
+      transition), producing output 2; S2 on input 1 goes to S0, producing
+      output 3; and S2 on input 0 stays at S2 (a self-loop), producing output 2.
+      This machine has S = {S0, S1, S2}, I = {0, 1}, O = {2, 3}.
+    mermaid: |
+      flowchart LR
+        S0(("S0 (start)"))
+        S1(("S1 (accept)"))
+        S2(("S2"))
+        S0 -->|"1,2"| S1
+        S0 -->|"0,3"| S2
+        S1 -->|"0,3"| S2
+        S1 -->|"1,2"| S2
+        S2 -->|"1,3"| S0
+        S2 -->|"0,2"| S2
+
+  - id: "17.21"
+    caption: "Tabular Representation of an FSM"
+    page: 13
+    image: "figures/figure-17-21.jpg"
+    description: |-
+      Two alternative state-table representations of the FSM in Figure 17.20,
+      labelled (a) and (b) and sharing one caption.
+
+      Table (a) gives the next state for each current state and input:
+
+      | Current State | Input 0 | Input 1 |
+      |---|---|---|
+      | S0 | S2 | S1 |
+      | S1 | S2 | S2 |
+      | S2 | S2 | S0 |
+
+      Table (b) gives, for each current state, the output and next state for
+      each input:
+
+      | Current State | Output (Input 0) | Output (Input 1) | State (Input 0) | State (Input 1) |
+      |---|---|---|---|---|
+      | S0 | 3 | 2 | S2 | S1 |
+      | S1 | 3 | 2 | S2 | S2 |
+      | S2 | 2 | 3 | S2 | S0 |
+    mermaid: null
+
+  - id: "17.22"
+    caption: "Chomsky Hierarchy of Grammars"
+    page: 14
+    image: "figures/figure-17-22.jpg"
+    description: >-
+      A nested-ellipse diagram of the Chomsky hierarchy of grammars, drawn as
+      four concentric ellipses. The outermost ellipse is Type 0: Phrase
+      Structure Grammar (PSG), which contains the next ellipse, Type 1:
+      Context-Sensitive Grammar (CSG), which contains Type 2: Context-Free
+      Grammar (CFG), which in turn contains the innermost ellipse, Type 3:
+      Regular Grammar. The nesting expresses that every regular grammar is a
+      CFG, every CFG is a CSG, and every CSG is a PSG.
+    mermaid: |
+      flowchart TD
+        PSG["Type 0: PSG"] -->|contains| CSG["Type 1: CSG"]
+        CSG -->|contains| CFG["Type 2: CFG"]
+        CFG -->|contains| REG["Type 3: Regular Grammar"]
+
+  - id: "17.23"
+    caption: "A Discrete Probability Function for Rolling a Die"
+    page: 18
+    image: "figures/figure-17-23.jpg"
+    description: |-
+      A discrete probability distribution table for the outcome X of rolling a
+      fair six-sided die, giving P(x), the probability of each outcome:
+
+      | X | 1 | 2 | 3 | 4 | 5 | 6 |
+      |---|---|---|---|---|---|---|
+      | P(x) | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 |
+    mermaid: null

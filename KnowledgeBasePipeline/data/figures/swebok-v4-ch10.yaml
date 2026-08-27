@@ -1,0 +1,44 @@
+# Figure definitions for SWEBOK v4.0, Chapter 10 "Software Engineering Process".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "10.1"
+    caption: "Breakdown of Topics for the Software Engineering Process KA"
+    page: 2
+    image: "figures/figure-10-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Engineering Process Knowledge Area
+      into its three top-level topics and their subtopics: (1) Software
+      Engineering Process Fundamentals, (2) Life Cycles, and (3) Software Process
+      Assessment and Improvement. Each top-level topic decomposes into the
+      subtopics covered in this KA.
+    mermaid: |
+      flowchart TD
+        SEP["Software Engineering Process"]
+        SEP --> F["1. Software Engineering Process Fundamentals"]
+        SEP --> L["2. Life Cycles"]
+        SEP --> A["3. Software Process Assesment and Improvement"]
+        F --> F1["Introduction"]
+        F --> F2["Software Engineering Process Definition"]
+        L --> L1["Life Cycle Definition, Process Categories and Terminology"]
+        L --> L2["Rationale for Life Cycles"]
+        L --> L3["The Concepts of Process Models and Life Cycle Models"]
+        L --> L4["Some Paradigm for Development Life Cycle Models"]
+        L --> L5["Development Life Cycle Models and Their Engineering Dimension"]
+        L --> L6["The Management of SLCPs"]
+        L --> L7["Software Engineering Process Management"]
+        L --> L8["Software Life Cycle Adaptation"]
+        L --> L9["Practical Considerations"]
+        L --> L10["Software Process Infrastructure, Tools, Methods"]
+        L --> L11["Software Engineering Process Monitoring and the Relation to the Software Product"]
+        A --> A1["Overview of Software Process Assessment and Improvement"]
+        A --> A2["Global Question Metric (GQM)"]
+        A --> A3["Framework-Based-Method"]
+        A --> A4["Process Assessment and Improvement in Agile"]

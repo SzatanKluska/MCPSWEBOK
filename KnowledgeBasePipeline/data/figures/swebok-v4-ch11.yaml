@@ -1,0 +1,44 @@
+# Figure definitions for SWEBOK v4.0, Chapter 11 "Software Engineering Models
+# and Methods".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "11.1"
+    caption: "Breakdown of Topics for the Software Engineering Models and Methods KA"
+    page: 2
+    image: "figures/figure-11-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Engineering Models and Methods
+      Knowledge Area into its four top-level topics and their subtopics: (1)
+      Modeling, (2) Types of Models, (3) Analysis of Models, and (4) Software
+      Engineering Methods. Each top-level topic decomposes into the subtopics
+      covered in this KA.
+    mermaid: |
+      flowchart TD
+        MM["Software Engineering Models and Methods"]
+        MM --> M["Modeling"]
+        MM --> T["Types of Models"]
+        MM --> A["Analysis of Models"]
+        MM --> E["Software Engineering Methods"]
+        M --> M1["Modeling Principles"]
+        M --> M2["Properties and Expression of Models"]
+        M --> M3["Syntax, Semantics and Pragmatics"]
+        M --> M4["Preconditions, Postconditions and Invariants"]
+        T --> T1["Behavioral Modeling"]
+        T --> T2["Structure Modeling"]
+        A --> A1["Analyzing for Completeness"]
+        A --> A2["Analyzing for Consistency"]
+        A --> A3["Analyzing for Correctness"]
+        A --> A4["Analyzing for Traceability"]
+        A --> A5["Analyzing for Interaction"]
+        E --> E1["Heuristic Methods"]
+        E --> E2["Formal Methods"]
+        E --> E3["Prototyping Methods"]
+        E --> E4["Agile Methods"]

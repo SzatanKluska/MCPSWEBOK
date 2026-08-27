@@ -1,0 +1,18 @@
+# Figure-crop geometry for SWEBOK v4.0, Chapter 6 "Software Engineering Operations".
+#
+# Consumed by kbprep.figures.extract to crop each Figure N.M out of the
+# source PDF into KnowledgeBase/figures/figure-N-M.jpg. `page` is 0-based.
+# `column` is left|right|full (which half of a two-column page the figure
+# sits in). `top` bounds the crop's top edge: header (below the running
+# header), top (page top), or after:<fig_id> (below a preceding figure on
+# the same page).
+
+figures:
+  - id: "6.1"
+    page: 1
+    column: full
+    top: header
+  - id: "6.2"
+    page: 3
+    column: full
+    top: header

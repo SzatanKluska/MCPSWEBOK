@@ -1,0 +1,58 @@
+# Figure definitions for SWEBOK v4.0, Chapter 5 "Software Testing".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, screenshots, or list/tabular
+# content, which a diagram grammar cannot faithfully represent; those rely on
+# `description` alone.
+
+figures:
+  - id: "5.1"
+    caption: "Breakdown of Topics for the Software Testing KA"
+    page: 3
+    image: "figures/figure-5-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Testing Knowledge Area into its
+      eight top-level topics and their subtopics: (1) Software Testing
+      Fundamentals, (2) Test Levels, (3) Test Techniques, (4) Test-Related
+      Measures, (5) Test Process, (6) Software Testing in the Development
+      Processes and the Application Domains, (7) Testing of and Testing
+      Through Emerging Technologies, and (8) Software Testing Tools. Each
+      top-level topic decomposes into the subtopics covered in this KA.
+    mermaid: |
+      flowchart LR
+        ST["Software Testing"]
+        ST --> F["1. Software Testing Fundamentals"]
+        ST --> L["2. Test Levels"]
+        ST --> T["3. Test Techniques"]
+        ST --> M["4. Test-Related Measures"]
+        ST --> P["5. Test Process"]
+        ST --> D["6. Software Testing in the Development Processes and the Application Domains"]
+        ST --> E["7. Testing of and Testing Through Emerging Technologies"]
+        ST --> O["8. Software Testing Tools"]
+        F --> F1["Faults vs. Failures"]
+        F --> F2["Key Issues"]
+        F --> F3["Relationship of Testing to other Activities"]
+        L --> L1["The Target of the Test"]
+        L --> L2["Objectives of Testing"]
+        T --> T1["Specification-Based Techniques"]
+        T --> T2["Structure-Based Test Techniques"]
+        T --> T3["Experience-Based Techniques"]
+        T --> T4["Fault-Based and Mutation Techniques"]
+        T --> T5["Techniques Based on the Nature of the Application"]
+        T --> T6["Selecting and Combining Techniques"]
+        T --> T7["Techniques Based on Derived Knowledge"]
+        M --> M1["Evaluation of the SUT"]
+        M --> M2["Evaluation of the Test Performed"]
+        P --> P1["Practical Considerations"]
+        P --> P2["Test Sub-Processes and Activities"]
+        P --> P3["Staffing"]
+        D --> D1["Testing Inside Software Development Process"]
+        D --> D2["Testing in the Application Domains"]
+        E --> E1["Testing of Emerging Technologies"]
+        E --> E2["Testing Through Emerging Technologies"]
+        O --> O1["Testing Tool Support and Selection"]
+        O --> O2["Categories of Tools"]

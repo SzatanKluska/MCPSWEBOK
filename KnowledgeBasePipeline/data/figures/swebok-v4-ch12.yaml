@@ -1,0 +1,41 @@
+# Figure definitions for SWEBOK v4.0, Chapter 12 "Software Quality".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "12.1"
+    caption: "Breakdown of Topics for Software Quality"
+    page: 2
+    image: "figures/figure-12-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Quality Knowledge Area into its
+      four top-level topics and their subtopics: (1) Software Quality
+      Fundamentals, (2) Software Quality Management Process, (3) Software
+      Quality Assurance Process, and (4) Software Quality Tools (a leaf topic
+      with no listed subtopics). Each top-level topic decomposes into the
+      subtopics covered in this KA.
+    mermaid: |
+      flowchart TD
+        SQ["Software Quality"]
+        SQ --> F["Software Quality Fundamentals"]
+        SQ --> M["Software Quality Management Process"]
+        SQ --> A["Software Quality Assurance Process"]
+        SQ --> T["Software Quality Tools"]
+        F --> F1["Software Engineering Culture and Ethics"]
+        F --> F2["Value and Cost of Quality"]
+        F --> F3["Standards, Models and Certifications"]
+        F --> F4["Software Dependability and Integrity Levels"]
+        M --> M1["Software Quality Improvement"]
+        M --> M2["Plan Quality Management"]
+        M --> M3["Evaluate Quality Management"]
+        M --> M4["Perform Corrective and Preventive Actions"]
+        A --> A1["Prepare for Quality Assurance"]
+        A --> A2["Perform Process Assurance"]
+        A --> A3["Perform Product Assurance"]
+        A --> A4["Verification & Validation and Testing"]

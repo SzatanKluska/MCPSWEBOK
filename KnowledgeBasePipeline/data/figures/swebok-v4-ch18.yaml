@@ -1,0 +1,164 @@
+# Figure definitions for SWEBOK v4.0, Chapter 18 "Engineering Foundations".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "18.1"
+    caption: "Breakdown of Topics for the Engineering Foundations KA"
+    page: 2
+    image: "figures/figure-18-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Engineering Foundations Knowledge Area into
+      its ten top-level topics and their subtopics: (1) The Engineering
+      Process, (2) Engineering Design, (3) Abstraction and Encapsulation, (4)
+      Empirical Methods and Experimental Techniques, (5) Statistical Analysis,
+      (6) Modeling, Simulation, and Prototyping, (7) Measurement, (8)
+      Standards, (9) Root Cause Analysis, and (10) Industry 4.0 and Software
+      Engineering. Most top-level topics decompose into subtopics; three — The
+      Engineering Process, Standards, and Industry 4.0 and Software
+      Engineering — have no subtopics shown.
+    mermaid: |
+      flowchart LR
+        EF["Engineering Foundations"]
+        EF --> P["1. The Engineering Process"]
+        EF --> D["2. Engineering Design"]
+        EF --> A["3. Abstraction and Encapsulation"]
+        EF --> M["4. Empirical Methods and Experimental Techniques"]
+        EF --> S["5. Statistical Analysis"]
+        EF --> MS["6. Modeling, Simulation, and Prototyping"]
+        EF --> ME["7. Measurement"]
+        EF --> ST["8. Standards"]
+        EF --> R["9. Root Cause Analysis"]
+        EF --> I4["10. Industry 4.0 and Software Engineering"]
+        D --> D1["Engineering Design in Engineering Education"]
+        D --> D2["Design as a Problem-Solving Activity"]
+        A --> A1["Levels of Abstraction"]
+        A --> A2["Encapsulation"]
+        A --> A3["Hierarchy"]
+        A --> A4["Alternate Abstractions"]
+        M --> M1["Designed Experiment"]
+        M --> M2["Observational Study"]
+        M --> M3["Retrospective Study"]
+        S --> S1["Unit of Analysis (Sampling Units), Population, and Sample"]
+        S --> S2["Correlation and Regression"]
+        MS --> MS1["Modeling"]
+        MS --> MS2["Simulation"]
+        MS --> MS3["Prototyping"]
+        ME --> ME1["Levels (Scales) of Measurement"]
+        ME --> ME2["Implications of Measurement Theory on Programming Languages"]
+        ME --> ME3["Direct and Derived Measures"]
+        ME --> ME4["Reliability and Validity"]
+        ME --> ME5["Assessing Reliability"]
+        ME --> ME6["Goal-Question-Metric Paradigm: Why Measure?"]
+        R --> R1["Root Cause Analysis Techniques"]
+        R --> R2["Root Cause-Based Improvement"]
+
+  - id: "18.2"
+    caption: "The Engineering Process"
+    page: 3
+    image: "figures/figure-18-2.jpg"
+    description: >-
+      The engineering process shown as a stepwise sequence. "Understand the
+      real problem" feeds into two parallel steps, "Define the selection
+      criteria" and "Identify all reasonable technically feasible solutions,"
+      which both feed into "Evaluate each alternative against the selection
+      criteria." That step leads to "Select the preferred alternative," which
+      leads to "Monitor the performance of the selected alternative," after
+      which the process continues (an open arrow at the end indicates the
+      process is not necessarily terminal — real engineering work often
+      revisits earlier steps).
+    mermaid: |
+      flowchart TD
+        A["Understand the real problem"] --> B["Define the selection criteria"]
+        A --> C["Identify all reasonable technically feasible solutions"]
+        B --> D["Evaluate each alternative against the selection criteria"]
+        C --> D
+        D --> E["Select the preferred alternative"]
+        E --> F["Monitor the performance of the selected alternative"]
+        F --> G(( ))
+
+  - id: "18.3"
+    caption: "Code Samples for Measurement Theory"
+    page: 14
+    image: "figures/figure-18-3.jpg"
+    description: |-
+      Eight code samples (A-H) illustrating how programming-language data
+      types could explicitly encode measurement-theory scale types (nominal,
+      ordinal, interval, ratio) to catch inappropriate manipulations of
+      measurements, contrasted with samples that compile without warning today
+      even though they are measurement-theoretically invalid.
+
+      Sample A — a hypothetical language explicitly supporting a nominal
+      scale:
+      ```
+      nominal enum automobile_style = sedan, coupe, hatchback,
+                                       minivan, suv, sports_car;
+      ```
+
+      Sample B — a more-than/less-than comparison on that nominal type, which
+      the language could flag as an error:
+      ```
+      if( thisCarStyle >= sedan ) then …  // this is not allowed
+      ```
+
+      Sample C — declaring an ordinal type:
+      ```
+      ordinal enum CMMI_staged_level = initial, repeatable, defined,
+                                        managed, optimizing;
+      ```
+
+      Sample D — a more-than comparison on the ordinal type, which is a valid
+      operation and would not trigger any error or warning:
+      ```
+      if( anOrgsCMMILevel > repeatable ) then …
+      ```
+
+      Sample E — declaring an interval-scale type and comparing/adding a
+      constant, showing that addition of a constant offset is allowed but
+      multiplying by a constant is not:
+      ```
+      interval AirTemperatureCelsius from -120.0 to +180.0;
+      AirTemperatureCelsius yesterdaysHighTemp;
+      AirTemperatureCelsius todaysHighTemp;
+      if( todaysHighTemp > yesterdaysHighTemp ) { … }        // allowed
+      if( todaysHighTemp > yesterdaysHighTemp * 2.0 ) { … }  // not
+      ```
+
+      Sample F — declaring a ratio-scale type, where multiplying by a constant
+      is allowed because a true zero point exists:
+      ```
+      ratio TemperatureKelvin from 0.00 to 1000.00;
+      TemperatureKelvin previousReading;
+      TemperatureKelvin thisReading;
+      if( thisReading > previousReading * 2. ) { … }  // allowed
+      ```
+
+      Sample G — how common programming languages behave today: both
+      quantities are declared as plain `double`, so the language allows
+      assigning a money value to a temperature variable, which is
+      measurement-theoretically meaningless but compiles without complaint:
+      ```
+      double priceOfBook;
+      double highTemperature;
+      highTemperature = priceOfBook;  // makes no sense but is allowed
+      ```
+
+      Sample H — the same mistake, but with explicit ratio-scale types
+      (`Money` and `TemperatureKelvin`) that a measurement-theory-aware
+      language could use to reject the assignment as a compiler error or
+      warning, unlike the plain-`double` version in Sample G:
+      ```
+      ratio Money from -10000.00 to +10000.00;
+      ratio TemperatureKelvin from 0.00 to 1000.00;
+      Money priceOfBook;
+      TemperatureKelvin highTemperature;
+      double highTemperature;
+      highTemperature = priceOfBook;  // not allowed
+      ```
+    mermaid: null

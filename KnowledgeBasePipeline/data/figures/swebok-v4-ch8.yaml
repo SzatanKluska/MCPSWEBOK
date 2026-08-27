@@ -1,0 +1,147 @@
+# Figure definitions for SWEBOK v4.0, Chapter 8 "Software Configuration Management".
+#
+# Authored content that the RAG pipeline turns into figures.jsonl (a side
+# lookup, NOT part of the embedded search index). The MCP server attaches these
+# to search hits whose text references the figure (Option B: join by reference).
+#
+# `image` is relative to this file's directory (provenance only). `mermaid` is
+# null for figures that are quantitative graphs, which a diagram grammar cannot
+# faithfully represent; those rely on `description` alone.
+
+figures:
+  - id: "8.1"
+    caption: "Breakdown of Topics for the Software Configuration Management KA."
+    page: 2
+    image: "figures/figure-8-1.jpg"
+    description: >-
+      Hierarchical breakdown of the Software Configuration Management
+      Knowledge Area into its seven top-level topics and their subtopics: (1)
+      Management of the SCM Process, (2) Software Configuration
+      Identification, (3) Software Configuration Change Control, (4) Software
+      Configuration Status Accounting, (5) Software Configuration Auditing,
+      (6) Software Release Management and Delivery, and (7) Software
+      Configuration Management Tools (which has no listed subtopics in the
+      figure). Each top-level topic decomposes into the subtopics covered in
+      this KA, some of which further decompose into a third level.
+    mermaid: |
+      flowchart LR
+        SCM["Software Configuration Management"]
+        SCM --> M["1. Management of the SCM Process"]
+        SCM --> I["2. Software Configuration Identification"]
+        SCM --> C["3. Software Configuration Change Control"]
+        SCM --> A["4. Software Configuration Status Accounting"]
+        SCM --> U["5. Software Configuration Auditing"]
+        SCM --> R["6. Software Release Management and Delivery"]
+        SCM --> T["7. Software Configuration Management Tools"]
+        M --> M1["Organizational Context for SCM"]
+        M --> M2["Constraints and Guidance for the SCM Process"]
+        M --> M3["Planning for SCM"]
+        M3 --> M3a["SCM Organization and Responsibilities"]
+        M3 --> M3b["SCM Resources and Schedules"]
+        M3 --> M3c["Tool Selection and Implementation"]
+        M3 --> M3d["Vendor/Subcontractor Control"]
+        M3 --> M3e["Interface Control"]
+        M --> M4["SCM Plan"]
+        M --> M5["Surveillance of Software Configuration"]
+        M5 --> M5a["Management SCM Measures and Measurement"]
+        M5 --> M5b["In-Process Audits of SCM"]
+        I --> I1["Identifying Items to be Controlled"]
+        I1 --> I1a["Software Configuration"]
+        I1 --> I1b["Software Configuration Item"]
+        I --> I2["Configuration Item Identifiers and Attributes"]
+        I --> I3["Baselines Identification"]
+        I --> I4["Baseline Attributes"]
+        I --> I5["Relationships Scheme Definition"]
+        I --> I6["Software Libraries"]
+        C --> C1["Requesting, Evaluating and Approving Software Changes"]
+        C1 --> C1a["Software Configuration Control Board"]
+        C1 --> C1b["Software Change Request Process"]
+        C1 --> C1c["Software Change Request Forms Definition"]
+        C --> C2["Implementing Software Changes"]
+        C --> C3["Deviations and Waivers"]
+        A --> A1["Software Configuration Status Information"]
+        A --> A2["Software Configuration Status Reporting"]
+        U --> U1["Software Functional Configuration Audit"]
+        U --> U2["Software Physical Configuration Audit"]
+        U --> U3["In-process Audits of a Software Baseline"]
+        R --> R1["Software Building"]
+        R --> R2["Software Release Management"]
+
+  - id: "8.2"
+    caption: "Example of reported relationships"
+    page: 8
+    image: "figures/figure-8-2.jpg"
+    description: |-
+      A worked example of tracking configuration item (CI) relationships,
+      combining a small relationship diagram with three record tables.
+
+      The diagram shows three CIs — CI-1, CI-2, CI-3 — and their relationships:
+      each CI has a reflexive "succession" relationship with itself (drawn as a
+      loop back onto the same node, since each version change creates a new
+      succession record for that CI); CI-2 has a "dependency" relationship
+      pointing to CI-1; and CI-3 has a "derivation" relationship pointing to
+      CI-1 (CI-3 derives from CI-1).
+
+      Successions Records — the date each CI was created (first three rows),
+      and a change made to CI-1 on 10/05/2021 that created new version 2 from
+      current version 1 (fourth row):
+
+      | CI Code | Current Version | Next Version | Date |
+      |---|---|---|---|
+      | CI-1 | – | 1 | 10/01/2021 |
+      | CI-2 | – | 1 | 10/04/2021 |
+      | CI-3 | – | 1 | 10/03/2021 |
+      | CI-1 | 1 | 2 | 10/05/2021 |
+
+      Dependency Record — CI-1 and CI-2 have a dependency relationship created
+      the day CI-2 was developed:
+
+      | From CI | To CI | Date |
+      |---|---|---|
+      | CI-1 | CI-2 | 10/04/2021 |
+
+      Derivation Record — CI-3 derives from CI-1, a relationship that came up
+      the day CI-3 was created:
+
+      | From CI | To CI | Date |
+      |---|---|---|
+      | CI-3 | CI-1 | 10/03/2021 |
+    mermaid: |
+      flowchart LR
+        CI1["CI-1"]
+        CI2["CI-2"]
+        CI3["CI-3"]
+        CI1 -->|succession| CI1
+        CI2 -->|succession| CI2
+        CI3 -->|succession| CI3
+        CI2 -->|dependency| CI1
+        CI3 -->|derivation| CI1
+
+  - id: "8.3"
+    caption: "Flow of a Change Control Process"
+    page: 9
+    image: "figures/figure-8-3.jpg"
+    description: >-
+      Flowchart of a change control process. It starts at "Need for Change"
+      and flows to "Change identified for controlled item", then to "SCR
+      Generated or Upgraded", then to a decision "SCR Evaluated": if
+      Incomplete, it loops back to "Change identified for controlled item";
+      if Complete, it proceeds to "Preliminary Investigation", then to a
+      decision "CCB Review": if Rejected, it goes to "Inform Requester"
+      (terminal); if Approved, it goes to "Assign to Software Engineer" and
+      then to "Schedule, Design, Test, Complete Change" (terminal). A separate
+      note box, not connected to the flow by an arrow, states that an
+      "Emergency Path" usually also exists, where changes can be implemented
+      with the change process performed afterward.
+    mermaid: |
+      flowchart TD
+        Need(["Need for Change"])
+        Need --> Change["Change identified for controlled item"]
+        Change --> SCR["SCR Generated or Upgraded"]
+        SCR --> Eval{"SCR Evaluated"}
+        Eval -->|Incomplete| Change
+        Eval -->|Complete| Prelim["Preliminary Investigation"]
+        Prelim --> CCB{"CCB Review"}
+        CCB -->|Rejected| Inform["Inform Requester"]
+        CCB -->|Approved| Assign["Assign to Software Engineer"]
+        Assign --> Sched["Schedule, Design, Test, Complete Change"]
